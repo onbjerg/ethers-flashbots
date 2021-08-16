@@ -1,4 +1,7 @@
-use ethers_core::types::{transaction::response::Transaction, Address, Bytes, H256, U256, U64};
+use ethers_core::{
+    types::{transaction::response::Transaction, Address, Bytes, H256, U256, U64},
+    utils::keccak256,
+};
 use serde::{Deserialize, Serialize, Serializer};
 
 /// A bundle hash.
@@ -46,10 +49,8 @@ pub struct BundleRequest {
     #[serde(rename = "txs")]
     #[serde(serialize_with = "serialize_txs")]
     transactions: Vec<BundleTransaction>,
-    #[serde(skip)]
-    revertible_transactions: Vec<usize>,
     #[serde(rename = "revertingTxHashes")]
-    revertible_transaction_hashes: Vec<Bytes>,
+    revertible_transaction_hashes: Vec<H256>,
 
     #[serde(rename = "blockNumber")]
     target_block: Option<U64>,
@@ -98,9 +99,15 @@ impl BundleRequest {
     /// This differs from [`BundleRequest::push_transaction`] in that the bund will still be
     /// considered valid if the transaction reverts.
     pub fn push_revertible_transaction<T: Into<BundleTransaction>>(mut self, tx: T) -> Self {
-        self.transactions.push(tx.into());
-        self.revertible_transactions
-            .push(self.transactions.len() - 1);
+        let tx = tx.into();
+        self.transactions.push(tx.clone());
+
+        let tx_hash: H256 = match tx {
+            BundleTransaction::Signed(inner) => inner.hash(),
+            BundleTransaction::Raw(inner) => keccak256(inner).into(),
+        };
+        self.revertible_transaction_hashes.push(tx_hash);
+
         self
     }
 
