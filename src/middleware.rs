@@ -49,13 +49,10 @@ impl<M: Middleware, S: Signer> FromErr<M::Error> for FlashbotsMiddlewareError<M,
 ///
 /// # Example
 /// ```
-/// use ethers::{
-///     middleware::SignerMiddleware,
-///     signers::LocalWallet,
-///     providers::{Provider, Http}
-/// };
+/// use ethers::prelude::*;
 /// use std::convert::TryFrom;
 /// use ethers_flashbots::FlashbotsMiddleware;
+/// use url::Url;
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
 /// let provider = Provider::<Http>::try_from("http://localhost:8545")
@@ -75,7 +72,7 @@ impl<M: Middleware, S: Signer> FromErr<M::Error> for FlashbotsMiddlewareError<M,
 /// let mut client = SignerMiddleware::new(
 ///     FlashbotsMiddleware::new(
 ///         provider,
-///         "https://relay.flashbots.net",
+///         Url::parse("https://relay.flashbots.net")?,
 ///         signer
 ///     ),
 ///     wallet
