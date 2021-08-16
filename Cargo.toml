@@ -1,0 +1,29 @@
+[package]
+name = "ethers-flashbots"
+version = "0.1.0"
+authors = ["Oliver Nordbjerg <hi@notbjerg.me>"]
+license = "MIT"
+edition = "2018"
+readme = "./README.md"
+documentation = "https://docs.rs/ethers-flashbots"
+repository = "https://github.com/onbjerg/ethers-flashbots"
+homepage = "https://github.com/onbjerg/ethers-flashbots"
+description = """
+Flashbots middleware for ethers-rs
+"""
+
+[dependencies]
+thiserror = { version = "1.0.26", default-features = false }
+serde = "1"
+serde_json = "1"
+url = { version = "2.2.2", default-features = false }
+reqwest = "0.11"
+async-trait = { version = "0.1.50", default-features = false }
+ethers-core = { git = "https://github.com/gakonst/ethers-rs" }
+ethers-signers = { git = "https://github.com/gakonst/ethers-rs" }
+ethers-providers = { git = "https://github.com/gakonst/ethers-rs" }
+
+[dev-dependencies]
+ethers = { git = "https://github.com/gakonst/ethers-rs" }
+tokio = { version = "1.7.1", features = ["macros", "rt-multi-thread"] }
+anyhow = "1.0"
