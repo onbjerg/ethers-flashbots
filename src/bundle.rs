@@ -227,6 +227,8 @@ pub struct SimulatedTransaction {
     /// The value sent in this transaction.
     #[serde(deserialize_with = "deserialize_u256")]
     pub value: U256,
+    /// The reason this transaction reverted (if it did).
+    pub error: Option<String>,
 }
 
 /// Details of a simulated bundle.
@@ -309,7 +311,8 @@ mod tests {
         "gasUsed": 21000,
         "toAddress": "0x73625f59CAdc5009Cb458B751b3E7b6b48C06f2C",
         "txHash": "0x669b4704a7d993a946cdd6e2f95233f308ce0c4649d2e04944e8299efcaa098a",
-        "value": "0x"
+        "value": "0x",
+        "error": "execution reverted"
       },
       {
         "coinbaseDiff": "10000000000063000",
@@ -347,5 +350,10 @@ mod tests {
         assert_eq!(simulated_bundle.gas_fees, U256::from(126000));
         assert_eq!(simulated_bundle.simulation_block, U64::from(5221585));
         assert_eq!(simulated_bundle.transactions.len(), 2);
+        assert_eq!(
+            simulated_bundle.transactions[0].error,
+            Some("execution reverted".into())
+        );
+        assert_eq!(simulated_bundle.transactions[1].error, None);
     }
 }
