@@ -16,3 +16,5 @@ pub use middleware::{FlashbotsMiddleware, FlashbotsMiddlewareError};
 mod jsonrpc;
 mod relay;
 pub use relay::{Relay, RelayError};
+
+mod utils;

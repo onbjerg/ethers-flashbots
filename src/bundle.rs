@@ -1,10 +1,9 @@
+use crate::utils::{deserialize_u256, deserialize_u64};
 use ethers_core::{
     types::{transaction::response::Transaction, Address, Bytes, H256, U256, U64},
     utils::keccak256,
 };
-use serde::{de, Deserialize, Serialize, Serializer};
-use serde_json::Value;
-use std::str::FromStr;
+use serde::{Deserialize, Serialize, Serializer};
 
 /// A bundle hash.
 pub type BundleHash = H256;
@@ -267,46 +266,6 @@ pub struct SimulatedBundle {
     /// The simulated transactions in this bundle.
     #[serde(rename = "results")]
     pub transactions: Vec<SimulatedTransaction>,
-}
-
-fn deserialize_u64<'de, D>(deserializer: D) -> Result<U64, D::Error>
-where
-    D: de::Deserializer<'de>,
-{
-    Ok(match Value::deserialize(deserializer)? {
-        Value::String(s) => {
-            if s.as_str() == "0x" {
-                return Ok(U64::zero());
-            }
-
-            U64::from(u64::from_str(s.as_str()).map_err(de::Error::custom)?)
-        }
-        Value::Number(num) => U64::from(
-            num.as_u64()
-                .ok_or_else(|| de::Error::custom("Invalid number"))?,
-        ),
-        _ => return Err(de::Error::custom("wrong type")),
-    })
-}
-
-fn deserialize_u256<'de, D>(deserializer: D) -> Result<U256, D::Error>
-where
-    D: de::Deserializer<'de>,
-{
-    Ok(match Value::deserialize(deserializer)? {
-        Value::String(s) => {
-            if s.as_str() == "0x" {
-                return Ok(U256::zero());
-            }
-
-            U256::from(u64::from_str(s.as_str()).map_err(de::Error::custom)?)
-        }
-        Value::Number(num) => U256::from(
-            num.as_u64()
-                .ok_or_else(|| de::Error::custom("Invalid number"))?,
-        ),
-        _ => return Err(de::Error::custom("wrong type")),
-    })
 }
 
 #[cfg(test)]
