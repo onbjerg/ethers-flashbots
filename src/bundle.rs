@@ -2,7 +2,9 @@ use ethers_core::{
     types::{transaction::response::Transaction, Address, Bytes, H256, U256, U64},
     utils::keccak256,
 };
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{de, Deserialize, Serialize, Serializer};
+use serde_json::Value;
+use std::str::FromStr;
 
 /// A bundle hash.
 pub type BundleHash = H256;
@@ -199,18 +201,23 @@ pub struct SimulatedTransaction {
     ///
     /// This includes tips and gas fees for this transaction.
     #[serde(rename = "coinbaseDiff")]
+    #[serde(deserialize_with = "deserialize_u256")]
     pub coinbase_diff: U256,
     /// The amount of Eth sent to coinbase in this transaction.
     #[serde(rename = "ethSentToCoinbase")]
+    #[serde(deserialize_with = "deserialize_u256")]
     pub coinbase_tip: U256,
     /// The gas price.
     #[serde(rename = "gasPrice")]
+    #[serde(deserialize_with = "deserialize_u256")]
     pub gas_price: U256,
     /// The amount of gas used in this transaction.
     #[serde(rename = "gasUsed")]
+    #[serde(deserialize_with = "deserialize_u256")]
     pub gas_used: U256,
     /// The total gas fees for this transaction.
     #[serde(rename = "gasFees")]
+    #[serde(deserialize_with = "deserialize_u256")]
     pub gas_fees: U256,
     /// The origin of this transaction.
     #[serde(rename = "fromAddress")]
@@ -219,6 +226,7 @@ pub struct SimulatedTransaction {
     #[serde(rename = "toAddress")]
     pub to: Address,
     /// The value sent in this transaction.
+    #[serde(deserialize_with = "deserialize_u256")]
     pub value: U256,
 }
 
@@ -234,23 +242,145 @@ pub struct SimulatedBundle {
     ///
     /// This includes total gas fees and coinbase tips.
     #[serde(rename = "coinbaseDiff")]
+    #[serde(deserialize_with = "deserialize_u256")]
     pub coinbase_diff: U256,
     /// The amount of Eth sent to coinbase in this bundle.
     #[serde(rename = "ethSentToCoinbase")]
+    #[serde(deserialize_with = "deserialize_u256")]
     pub coinbase_tip: U256,
     /// The gas price of the bundle.
     #[serde(rename = "bundleGasPrice")]
+    #[serde(deserialize_with = "deserialize_u256")]
     pub gas_price: U256,
     /// The total amount of gas used in this bundle.
     #[serde(rename = "totalGasUsed")]
+    #[serde(deserialize_with = "deserialize_u256")]
     pub gas_used: U256,
     /// The total amount of gas fees in this bundle.
     #[serde(rename = "gasFees")]
+    #[serde(deserialize_with = "deserialize_u256")]
     pub gas_fees: U256,
     /// The block at which this bundle was simulated.
     #[serde(rename = "stateBlockNumber")]
+    #[serde(deserialize_with = "deserialize_u64")]
     pub simulation_block: U64,
     /// The simulated transactions in this bundle.
     #[serde(rename = "results")]
     pub transactions: Vec<SimulatedTransaction>,
+}
+
+fn deserialize_u64<'de, D>(deserializer: D) -> Result<U64, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    Ok(match Value::deserialize(deserializer)? {
+        Value::String(s) => {
+            if s.as_str() == "0x" {
+                return Ok(U64::zero());
+            }
+
+            U64::from(u64::from_str(s.as_str()).map_err(de::Error::custom)?)
+        }
+        Value::Number(num) => U64::from(num.as_u64().ok_or(de::Error::custom("Invalid number"))?),
+        _ => return Err(de::Error::custom("wrong type")),
+    })
+}
+
+fn deserialize_u256<'de, D>(deserializer: D) -> Result<U256, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    Ok(match Value::deserialize(deserializer)? {
+        Value::String(s) => {
+            if s.as_str() == "0x" {
+                return Ok(U256::zero());
+            }
+
+            U256::from(u64::from_str(s.as_str()).map_err(de::Error::custom)?)
+        }
+        Value::Number(num) => U256::from(num.as_u64().ok_or(de::Error::custom("Invalid number"))?),
+        _ => return Err(de::Error::custom("wrong type")),
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::str::FromStr;
+
+    #[test]
+    fn bundle_serialize() {
+        let bundle = BundleRequest::new()
+            .push_transaction(Bytes::from(vec![0x1]))
+            .push_revertible_transaction(Bytes::from(vec![0x2]))
+            .set_block(2.into())
+            .set_min_timestamp(1000)
+            .set_max_timestamp(2000)
+            .set_simulation_timestamp(1000)
+            .set_simulation_block(1.into());
+
+        assert_eq!(
+            &serde_json::to_string(&bundle).unwrap(),
+            r#"{"txs":["0x01","0x02"],"revertingTxHashes":["0xf2ee15ea639b73fa3db9b34a245bdfa015c260c598b211bf05a1ecc4b3e3b4f2"],"blockNumber":"0x2","minTimestamp":1000,"maxTimestamp":2000,"stateBlockNumber":"0x1","timestamp":1000}"#
+        );
+    }
+
+    #[test]
+    fn simulated_bundle_deserialize() {
+        let simulated_bundle: SimulatedBundle = serde_json::from_str(
+            r#"{
+    "bundleGasPrice": "476190476193",
+    "bundleHash": "0x73b1e258c7a42fd0230b2fd05529c5d4b6fcb66c227783f8bece8aeacdd1db2e",
+    "coinbaseDiff": "20000000000126000",
+    "ethSentToCoinbase": "20000000000000000",
+    "gasFees": "126000",
+    "results": [
+      {
+        "coinbaseDiff": "10000000000063000",
+        "ethSentToCoinbase": "10000000000000000",
+        "fromAddress": "0x02A727155aeF8609c9f7F2179b2a1f560B39F5A0",
+        "gasFees": "63000",
+        "gasPrice": "476190476193",
+        "gasUsed": 21000,
+        "toAddress": "0x73625f59CAdc5009Cb458B751b3E7b6b48C06f2C",
+        "txHash": "0x669b4704a7d993a946cdd6e2f95233f308ce0c4649d2e04944e8299efcaa098a",
+        "value": "0x"
+      },
+      {
+        "coinbaseDiff": "10000000000063000",
+        "ethSentToCoinbase": "10000000000000000",
+        "fromAddress": "0x02A727155aeF8609c9f7F2179b2a1f560B39F5A0",
+        "gasFees": "63000",
+        "gasPrice": "476190476193",
+        "gasUsed": 21000,
+        "toAddress": "0x73625f59CAdc5009Cb458B751b3E7b6b48C06f2C",
+        "txHash": "0xa839ee83465657cac01adc1d50d96c1b586ed498120a84a64749c0034b4f19fa",
+        "value": "0x"
+      }
+    ],
+    "stateBlockNumber": 5221585,
+    "totalGasUsed": 42000
+  }"#,
+        )
+        .unwrap();
+
+        assert_eq!(
+            simulated_bundle.hash,
+            H256::from_str("0x73b1e258c7a42fd0230b2fd05529c5d4b6fcb66c227783f8bece8aeacdd1db2e")
+                .expect("could not deserialize hash")
+        );
+        assert_eq!(
+            simulated_bundle.coinbase_diff,
+            U256::from(20000000000126000u64)
+        );
+        assert_eq!(
+            simulated_bundle.coinbase_tip,
+            U256::from(20000000000000000u64)
+        );
+        assert_eq!(simulated_bundle.gas_price, U256::from(476190476193u64));
+        assert_eq!(simulated_bundle.gas_used, U256::from(42000));
+        assert_eq!(simulated_bundle.gas_fees, U256::from(126000));
+        assert_eq!(simulated_bundle.simulation_block, U64::from(5221585));
+        assert_eq!(simulated_bundle.transactions.len(), 2);
+    }
 }
