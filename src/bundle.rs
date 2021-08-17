@@ -51,15 +51,24 @@ pub struct BundleRequest {
     #[serde(serialize_with = "serialize_txs")]
     transactions: Vec<BundleTransaction>,
     #[serde(rename = "revertingTxHashes")]
+    #[serde(skip_serializing_if = "Vec::is_empty")]
     revertible_transaction_hashes: Vec<H256>,
 
     #[serde(rename = "blockNumber")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     target_block: Option<U64>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     min_timestamp: Option<u64>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     max_timestamp: Option<u64>,
 
     #[serde(rename = "stateBlockNumber")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     simulation_block: Option<U64>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "timestamp")]
     simulation_timestamp: Option<u64>,
 }
