@@ -117,7 +117,7 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
         bundle: &BundleRequest,
     ) -> Result<SimulatedBundle, FlashbotsMiddlewareError<M, S>> {
         self.relay
-            .request("eth_callBundle", bundle)
+            .request("eth_callBundle", [bundle])
             .await
             .map_err(FlashbotsMiddlewareError::RelayError)
     }
@@ -134,7 +134,7 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
     {
         let response: SendBundleResponse = self
             .relay
-            .request("eth_sendBundle", bundle)
+            .request("eth_sendBundle", [bundle])
             .await
             .map_err(FlashbotsMiddlewareError::RelayError)?;
 
