@@ -1,6 +1,6 @@
 use crate::utils::{deserialize_u256, deserialize_u64};
 use ethers_core::{
-    types::{transaction::response::Transaction, Address, Bytes, H256, U256, U64},
+    types::{transaction::response::Transaction, Address, Bytes, TxHash, H256, U256, U64},
     utils::keccak256,
 };
 use serde::{Deserialize, Serialize, Serializer};
@@ -115,6 +115,17 @@ impl BundleRequest {
     /// Get a reference to the transactions currently in the bundle request.
     pub fn transactions(&self) -> &Vec<BundleTransaction> {
         &self.transactions
+    }
+
+    /// Get a list of transaction hashes in the bundle request.
+    pub fn transaction_hashes(&self) -> Vec<TxHash> {
+        self.transactions
+            .iter()
+            .map(|tx| match tx {
+                BundleTransaction::Signed(inner) => keccak256(inner.rlp()).into(),
+                BundleTransaction::Raw(inner) => keccak256(inner).into(),
+            })
+            .collect()
     }
 
     /// Get the target block (if any).
