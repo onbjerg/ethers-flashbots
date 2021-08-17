@@ -40,7 +40,19 @@ async fn main() -> Result<()> {
     println!("Simulated bundle: {:?}", simulated_bundle);
 
     // Send it
-    client.inner().send_bundle(&bundle).await?;
+    let pending_bundle = client.inner().send_bundle(&bundle).await?;
+
+    // You can also optionally wait to see if the bundle was included
+    match pending_bundle.await {
+        Ok(bundle_hash) => println!(
+            "Bundle with hash {:?} was included in target block",
+            bundle_hash
+        ),
+        Err(PendingBundleError::BundleNotIncluded) => {
+            println!("Bundle was not included in target block.")
+        }
+        Err(e) => println!("An error occured: {}", e),
+    }
 
     Ok(())
 }
