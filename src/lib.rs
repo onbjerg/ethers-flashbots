@@ -10,6 +10,9 @@ pub use bundle::{
     BundleHash, BundleRequest, BundleTransaction, SimulatedBundle, SimulatedTransaction,
 };
 
+mod pending_bundle;
+pub use pending_bundle::{PendingBundle, PendingBundleError};
+
 mod middleware;
 pub use middleware::{FlashbotsMiddleware, FlashbotsMiddlewareError};
 

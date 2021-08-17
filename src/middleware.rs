@@ -1,5 +1,6 @@
 use crate::{
-    bundle::{BundleHash, BundleRequest, SimulatedBundle},
+    bundle::{BundleRequest, SimulatedBundle},
+    pending_bundle::PendingBundle,
     relay::{Relay, RelayError, SendBundleResponse},
 };
 use async_trait::async_trait;
@@ -129,14 +130,20 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
     pub async fn send_bundle(
         &self,
         bundle: &BundleRequest,
-    ) -> Result<BundleHash, FlashbotsMiddlewareError<M, S>> {
+    ) -> Result<PendingBundle<'_, <Self as Middleware>::Provider>, FlashbotsMiddlewareError<M, S>>
+    {
         let response: SendBundleResponse = self
             .relay
             .request("eth_sendBundle", bundle)
             .await
             .map_err(FlashbotsMiddlewareError::RelayError)?;
 
-        Ok(response.bundle_hash)
+        Ok(PendingBundle::new(
+            response.bundle_hash,
+            bundle.block().unwrap(),
+            bundle.transaction_hashes(),
+            self.provider(),
+        ))
     }
 }
 
