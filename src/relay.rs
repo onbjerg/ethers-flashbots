@@ -35,6 +35,9 @@ pub enum RelayError<S: Signer> {
     /// The request could not be parsed.
     #[error(transparent)]
     JsonRpcError(#[from] JsonRpcError),
+    /// The request parameters were invalid.
+    #[error("Client error: {text}")]
+    ClientError { text: String },
     /// The request could not be serialized.
     #[error(transparent)]
     RequestSerdeJson(#[from] serde_json::Error),
@@ -95,11 +98,28 @@ impl<S: Signer> Relay<S> {
             .json(&payload)
             .send()
             .await?;
-        let text = res.text().await?;
-        let res: Response<R> = serde_json::from_str(&text)
-            .map_err(|err| RelayError::ResponseSerdeJson { err, text })?;
+        let status = res.error_for_status_ref();
 
-        Ok(res.data.into_result()?)
+        match status {
+            Err(err) => {
+                let text = res.text().await?;
+                let status_code = err.status().unwrap();
+                if status_code.is_client_error() {
+                    // Client error (400-499)
+                    Err(RelayError::ClientError { text })
+                } else {
+                    // Internal server error (500-599)
+                    Err(RelayError::RequestError(err))
+                }
+            }
+            Ok(_) => {
+                let text = res.text().await?;
+                let res: Response<R> = serde_json::from_str(&text)
+                    .map_err(|err| RelayError::ResponseSerdeJson { err, text })?;
+
+                Ok(res.data.into_result()?)
+            }
+        }
     }
 }
 
