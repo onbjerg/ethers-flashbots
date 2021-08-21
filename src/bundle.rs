@@ -1,4 +1,4 @@
-use crate::utils::{deserialize_u256, deserialize_u64};
+use crate::utils::{deserialize_u256, deserialize_u64, deserialize_h160};
 use ethers_core::{
     types::{transaction::response::Transaction, Address, Bytes, TxHash, H256, U256, U64},
     utils::keccak256,
@@ -242,7 +242,7 @@ pub struct SimulatedTransaction {
     #[serde(rename = "fromAddress")]
     pub from: Address,
     /// The destination of this transaction.
-    #[serde(rename = "toAddress")]
+    #[serde(rename = "toAddress", deserialize_with="deserialize_h160")]
     pub to: Address,
     /// The value sent in this transaction.
     #[serde(deserialize_with = "deserialize_u256")]
