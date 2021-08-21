@@ -53,6 +53,11 @@ where
                 return Ok(U256::zero());
             }
 
+            // serialization of hexadecimal values not supported (yet)
+            if s.starts_with("0x") {
+                return Ok(U256::zero());
+            }
+
             U256::from(u64::from_str(s.as_str()).map_err(de::Error::custom)?)
         }
         Value::Number(num) => U256::from(
