@@ -245,7 +245,7 @@ pub struct SimulatedTransaction {
     #[serde(rename = "toAddress", deserialize_with="deserialize_h160")]
     pub to: Address,
     /// The value sent in this transaction.
-    #[serde(deserialize_with = "deserialize_u256")]
+    #[serde(deserialize_with = "deserialize_u256", default)]
     pub value: U256,
     /// The reason this transaction reverted (if it did).
     pub error: Option<String>,
