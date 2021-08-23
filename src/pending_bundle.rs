@@ -52,6 +52,11 @@ impl<'a, P: JsonRpcClient> PendingBundle<'a, P> {
             interval: Box::new(interval(DEFAULT_POLL_INTERVAL)),
         }
     }
+
+    /// Get the bundle hash for this pending bundle.
+    pub fn bundle_hash(&self) -> BundleHash {
+        self.bundle_hash
+    }
 }
 
 impl<'a, P: JsonRpcClient> Future for PendingBundle<'a, P> {
