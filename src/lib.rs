@@ -14,6 +14,9 @@ pub use bundle::{
 mod pending_bundle;
 pub use pending_bundle::{PendingBundle, PendingBundleError};
 
+mod user;
+pub use user::UserStats;
+
 mod middleware;
 pub use middleware::{FlashbotsMiddleware, FlashbotsMiddlewareError};
 

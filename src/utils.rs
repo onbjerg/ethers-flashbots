@@ -13,7 +13,11 @@ where
                 return Ok(U64::zero());
             }
 
-            U64::from(u64::from_str(s.as_str()).map_err(de::Error::custom)?)
+            if s.as_str().starts_with("0x") {
+                U64::from_str_radix(s.as_str(), 16).map_err(de::Error::custom)?
+            } else {
+                U64::from_dec_str(s.as_str()).map_err(de::Error::custom)?
+            }
         }
         Value::Number(num) => U64::from(
             num.as_u64()
@@ -33,7 +37,11 @@ where
                 return Ok(U256::zero());
             }
 
-            U256::from(u64::from_str(s.as_str()).map_err(de::Error::custom)?)
+            if s.as_str().starts_with("0x") {
+                U256::from_str_radix(s.as_str(), 16).map_err(de::Error::custom)?
+            } else {
+                U256::from_dec_str(s.as_str()).map_err(de::Error::custom)?
+            }
         }
         Value::Number(num) => U256::from(
             num.as_u64()

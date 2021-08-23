@@ -1,7 +1,8 @@
 use crate::{
     bundle::{BundleHash, BundleRequest, BundleStats, SimulatedBundle},
     pending_bundle::PendingBundle,
-    relay::{GetBundleStatsParams, Relay, RelayError, SendBundleResponse},
+    relay::{GetBundleStatsParams, GetUserStatsParams, Relay, RelayError, SendBundleResponse},
+    UserStats,
 };
 use async_trait::async_trait;
 use ethers_core::{
@@ -158,6 +159,28 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
                 [GetBundleStatsParams {
                     bundle_hash,
                     block_number,
+                }],
+            )
+            .await
+            .map_err(FlashbotsMiddlewareError::RelayError)
+    }
+
+    /// Get stats for your searcher identity.
+    ///
+    /// Your searcher identity is determined by the signer you
+    /// constructed the middleware with.
+    pub async fn get_user_stats(&self) -> Result<UserStats, FlashbotsMiddlewareError<M, S>> {
+        let latest_block = self
+            .inner
+            .get_block_number()
+            .await
+            .map_err(FlashbotsMiddlewareError::MiddlewareError)?;
+
+        self.relay
+            .request(
+                "flashbots_getUserStats",
+                [GetUserStatsParams {
+                    block_number: latest_block,
                 }],
             )
             .await

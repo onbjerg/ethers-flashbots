@@ -149,3 +149,9 @@ pub(crate) struct GetBundleStatsParams {
     pub(crate) bundle_hash: BundleHash,
     pub(crate) block_number: U64,
 }
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct GetUserStatsParams {
+    pub(crate) block_number: U64,
+}

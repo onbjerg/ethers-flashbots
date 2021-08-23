@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Added a way to get stats about bundles (`FlashbotsMiddleware::get_bundle_stats`)
 - Added a getter for the bundle hash of a pending bundle
+- Added a way to get stats about your searcher identity (`FlashbotsMiddleware::get_user_stats`)
 
 ## [0.3.0]
 

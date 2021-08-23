@@ -370,7 +370,7 @@ mod tests {
         "gasUsed": 21000,
         "toAddress": "0x73625f59CAdc5009Cb458B751b3E7b6b48C06f2C",
         "txHash": "0xa839ee83465657cac01adc1d50d96c1b586ed498120a84a64749c0034b4f19fa",
-        "value": "0x"
+        "value": "0x1"
       },
       {
         "coinbaseDiff": "10000000000063000",
@@ -408,11 +408,13 @@ mod tests {
         assert_eq!(simulated_bundle.gas_fees, U256::from(126000));
         assert_eq!(simulated_bundle.simulation_block, U64::from(5221585));
         assert_eq!(simulated_bundle.transactions.len(), 3);
+        assert_eq!(simulated_bundle.transactions[0].value, U256::zero());
         assert_eq!(
             simulated_bundle.transactions[0].error,
             Some("execution reverted".into())
         );
         assert_eq!(simulated_bundle.transactions[1].error, None);
+        assert_eq!(simulated_bundle.transactions[1].value, U256::from(0x1));
         assert_eq!(simulated_bundle.transactions[2].to, None);
     }
 
