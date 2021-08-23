@@ -1,0 +1,70 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+<!-- next-header -->
+
+## [Unreleased]
+
+## [0.3.0]
+
+### Fixes
+
+- If your bundle contains a transaction that deploys a contract,
+  the `SimulatedTransaction` will now have a destination (`to`) of
+  `None` to distinguish this from the zero address.
+
+## [0.2.2]
+
+### Fixes
+
+- Handle non-JSONRPC errors from the Flashbots relay
+
+## [0.2.1]
+
+### Fixes
+
+- Correctly serializes bundle requests
+
+## [0.2.0]
+
+**NOTE**: This release is unfortunately broken, please update to [0.2.1]
+
+### Added
+
+- You can now wait for bundle inclusions (see `PendingBundle`).
+- Added `BundleRequest::transaction_hashes`
+
+## [0.1.3]
+
+**NOTE**: This release is unfortunately broken, please update to [0.2.1]
+
+### Added
+
+- Added a revert reason to simulated transactions
+
+## [0.1.2]
+
+**NOTE**: This release is unfortunately broken, please update to [0.2.1]
+
+### Changed
+
+- Pinned ethers dependencies to specific versions
+
+## [0.1.1]
+
+**NOTE**: This release is unfortunately broken, please update to [0.2.1]
+
+Initial release.
+
+<!-- next-url !-->
+[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/{{tag_name}}...HEAD
+[0.3.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.3.0...HEAD
+[0.2.2]: https://github.com/onbjerg/ethers-flashbots/compare/0.2.2...HEAD
+[0.2.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.2.1...HEAD
+[0.2.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.2.0...HEAD
+[0.1.3]: https://github.com/onbjerg/ethers-flashbots/compare/0.1.3...HEAD
+[0.1.2]: https://github.com/onbjerg/ethers-flashbots/compare/0.1.2...HEAD
+[0.1.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.1.1...HEAD
