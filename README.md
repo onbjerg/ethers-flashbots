@@ -78,3 +78,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure that the tests and lints pass (`cargo test && cargo clippy -- -D clippy::all && cargo fmt -- --check`).
 
+Make sure to add your changes to the "Unreleased" section of the changelog.
