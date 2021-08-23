@@ -1,4 +1,4 @@
-use crate::utils::{deserialize_u256, deserialize_u64};
+use crate::utils::{deserialize_optional_h160, deserialize_u256, deserialize_u64};
 use ethers_core::{
     types::{transaction::response::Transaction, Address, Bytes, TxHash, H256, U256, U64},
     utils::keccak256,
@@ -242,8 +242,12 @@ pub struct SimulatedTransaction {
     #[serde(rename = "fromAddress")]
     pub from: Address,
     /// The destination of this transaction.
+    ///
+    /// If this is `None`, then the transaction was to a newly
+    /// deployed contract.
     #[serde(rename = "toAddress")]
-    pub to: Address,
+    #[serde(deserialize_with = "deserialize_optional_h160")]
+    pub to: Option<Address>,
     /// The value sent in this transaction.
     #[serde(deserialize_with = "deserialize_u256")]
     pub value: U256,
@@ -344,7 +348,18 @@ mod tests {
         "toAddress": "0x73625f59CAdc5009Cb458B751b3E7b6b48C06f2C",
         "txHash": "0xa839ee83465657cac01adc1d50d96c1b586ed498120a84a64749c0034b4f19fa",
         "value": "0x"
-      }
+      },
+      {
+        "coinbaseDiff": "10000000000063000",
+        "ethSentToCoinbase": "10000000000000000",
+        "fromAddress": "0x02A727155aeF8609c9f7F2179b2a1f560B39F5A0",
+        "gasFees": "63000",
+        "gasPrice": "476190476193",
+        "gasUsed": 21000,
+        "toAddress": "0x",
+        "txHash": "0xa839ee83465657cac01adc1d50d96c1b586ed498120a84a64749c0034b4f19fa",
+        "value": "0x"
+      } 
     ],
     "stateBlockNumber": 5221585,
     "totalGasUsed": 42000
@@ -369,11 +384,12 @@ mod tests {
         assert_eq!(simulated_bundle.gas_used, U256::from(42000));
         assert_eq!(simulated_bundle.gas_fees, U256::from(126000));
         assert_eq!(simulated_bundle.simulation_block, U64::from(5221585));
-        assert_eq!(simulated_bundle.transactions.len(), 2);
+        assert_eq!(simulated_bundle.transactions.len(), 3);
         assert_eq!(
             simulated_bundle.transactions[0].error,
             Some("execution reverted".into())
         );
         assert_eq!(simulated_bundle.transactions[1].error, None);
+        assert_eq!(simulated_bundle.transactions[2].to, None);
     }
 }
