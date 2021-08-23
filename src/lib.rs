@@ -7,7 +7,8 @@
 //! custom bundles can be crafted, simulated and submitted.
 mod bundle;
 pub use bundle::{
-    BundleHash, BundleRequest, BundleTransaction, SimulatedBundle, SimulatedTransaction,
+    BundleHash, BundleRequest, BundleStats, BundleTransaction, SimulatedBundle,
+    SimulatedTransaction,
 };
 
 mod pending_bundle;

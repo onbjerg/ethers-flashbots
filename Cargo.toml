@@ -19,6 +19,7 @@ thiserror = { version = "1.0.26", default-features = false }
 # Serialization/deserialization
 serde = "1"
 serde_json = "1"
+chrono = { version = "0.4.19", features = ["default", "serde"] }
 
 # HTTP
 url = { version = "2.2.2", default-features = false }

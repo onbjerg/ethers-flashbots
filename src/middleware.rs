@@ -1,11 +1,11 @@
 use crate::{
-    bundle::{BundleRequest, SimulatedBundle},
+    bundle::{BundleHash, BundleRequest, BundleStats, SimulatedBundle},
     pending_bundle::PendingBundle,
-    relay::{Relay, RelayError, SendBundleResponse},
+    relay::{GetBundleStatsParams, Relay, RelayError, SendBundleResponse},
 };
 use async_trait::async_trait;
 use ethers_core::{
-    types::{BlockNumber, Bytes},
+    types::{BlockNumber, Bytes, U64},
     utils::keccak256,
 };
 use ethers_providers::{FromErr, Middleware, PendingTransaction};
@@ -144,6 +144,24 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
             bundle.transaction_hashes(),
             self.provider(),
         ))
+    }
+
+    /// Get stats for a particular bundle.
+    pub async fn get_bundle_stats(
+        &self,
+        bundle_hash: BundleHash,
+        block_number: U64,
+    ) -> Result<BundleStats, FlashbotsMiddlewareError<M, S>> {
+        self.relay
+            .request(
+                "flashbots_getBundleStats",
+                [GetBundleStatsParams {
+                    bundle_hash,
+                    block_number,
+                }],
+            )
+            .await
+            .map_err(FlashbotsMiddlewareError::RelayError)
     }
 }
 

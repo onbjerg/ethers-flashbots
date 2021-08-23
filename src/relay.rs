@@ -2,7 +2,10 @@ use crate::{
     bundle::BundleHash,
     jsonrpc::{JsonRpcError, Request, Response},
 };
-use ethers_core::{types::H256, utils::keccak256};
+use ethers_core::{
+    types::{H256, U64},
+    utils::keccak256,
+};
 use ethers_signers::Signer;
 use reqwest::{Client, Error as ReqwestError};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -138,4 +141,11 @@ impl<S: Signer + Clone> Clone for Relay<S> {
 #[serde(rename_all = "camelCase")]
 pub(crate) struct SendBundleResponse {
     pub(crate) bundle_hash: BundleHash,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct GetBundleStatsParams {
+    pub(crate) bundle_hash: BundleHash,
+    pub(crate) block_number: U64,
 }

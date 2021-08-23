@@ -1,4 +1,5 @@
 use crate::utils::{deserialize_optional_h160, deserialize_u256, deserialize_u64};
+use chrono::{DateTime, Utc};
 use ethers_core::{
     types::{transaction::response::Transaction, Address, Bytes, TxHash, H256, U256, U64},
     utils::keccak256,
@@ -294,6 +295,28 @@ pub struct SimulatedBundle {
     pub transactions: Vec<SimulatedTransaction>,
 }
 
+/// Represents stats for a submitted bundle.
+///
+/// See [Flashbots docs][fb_getbundlestats] for more information.
+///
+/// [fb_getbundlestats]: https://docs.flashbots.net/flashbots-auction/searchers/advanced/rpc-endpoint/#flashbots_getbundlestats
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BundleStats {
+    /// Whether the bundle was simulated.
+    pub is_simulated: bool,
+    /// Whether the bundle was sent to miners.
+    pub is_sent_to_miners: bool,
+    /// Whether the bundle is high priority.
+    pub is_high_priority: bool,
+    /// When the bundle was simulated
+    pub simulated_at: Option<DateTime<Utc>>,
+    /// When the bundle was submitted
+    pub submitted_at: Option<DateTime<Utc>>,
+    /// When the bundle was sent to miners
+    pub sent_to_miners_at: Option<DateTime<Utc>>,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -391,5 +414,35 @@ mod tests {
         );
         assert_eq!(simulated_bundle.transactions[1].error, None);
         assert_eq!(simulated_bundle.transactions[2].to, None);
+    }
+
+    #[test]
+    fn bundle_stats_deserialize() {
+        let bundle_stats: BundleStats = serde_json::from_str(
+            r#"{
+  "isSimulated": true,
+  "isSentToMiners": true,
+  "isHighPriority": true,
+  "simulatedAt": "2021-08-06T21:36:06.317Z",
+  "submittedAt": "2021-08-06T21:36:06.250Z",
+  "sentToMinersAt": "2021-08-06T21:36:06.343Z"
+}"#,
+        )
+        .unwrap();
+
+        assert_eq!(bundle_stats.is_simulated, true);
+        assert_eq!(bundle_stats.is_sent_to_miners, true);
+        assert_eq!(
+            bundle_stats.simulated_at.unwrap().to_rfc3339(),
+            "2021-08-06T21:36:06.317+00:00"
+        );
+        assert_eq!(
+            bundle_stats.submitted_at.unwrap().to_rfc3339(),
+            "2021-08-06T21:36:06.250+00:00"
+        );
+        assert_eq!(
+            bundle_stats.sent_to_miners_at.unwrap().to_rfc3339(),
+            "2021-08-06T21:36:06.343+00:00"
+        );
     }
 }
