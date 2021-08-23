@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.3.1]
+
 ### Added
 
 - Added a way to get stats about bundles (`FlashbotsMiddleware::get_bundle_stats`)
@@ -67,6 +69,7 @@ Initial release.
 
 <!-- next-url !-->
 [Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/{{tag_name}}...HEAD
+[0.3.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.3.1...HEAD
 [0.3.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.3.0...HEAD
 [0.2.2]: https://github.com/onbjerg/ethers-flashbots/compare/0.2.2...HEAD
 [0.2.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.2.1...HEAD
