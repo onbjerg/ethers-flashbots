@@ -17,6 +17,20 @@ use url::Url;
 /// Errors for the Flashbots middleware.
 #[derive(Error, Debug)]
 pub enum FlashbotsMiddlewareError<M: Middleware, S: Signer> {
+    /// Some parameters were missing.
+    ///
+    /// For bundle simulation, check that the following are set:
+    /// - `simulation_block`
+    /// - `simulation_timestamp`
+    /// - `block`
+    ///
+    /// For bundle submission, check that the following are set:
+    /// - `block`
+    ///
+    /// Additionally, `min_timestamp` and `max_timestamp` must
+    /// both be set or unset.
+    #[error("Some parameters were missing")]
+    MissingParameters,
     /// The relay responded with an error.
     #[error(transparent)]
     RelayError(#[from] RelayError<S>),
@@ -117,6 +131,12 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
         &self,
         bundle: &BundleRequest,
     ) -> Result<SimulatedBundle, FlashbotsMiddlewareError<M, S>> {
+        bundle
+            .block()
+            .and(bundle.simulation_block())
+            .and(bundle.simulation_timestamp())
+            .ok_or(FlashbotsMiddlewareError::MissingParameters)?;
+
         self.relay
             .request("eth_callBundle", [bundle])
             .await
@@ -133,6 +153,16 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
         bundle: &BundleRequest,
     ) -> Result<PendingBundle<'_, <Self as Middleware>::Provider>, FlashbotsMiddlewareError<M, S>>
     {
+        // The target block must be set
+        bundle
+            .block()
+            .ok_or(FlashbotsMiddlewareError::MissingParameters)?;
+
+        // `min_timestamp` and `max_timestamp` must both either be unset or set.
+        if bundle.min_timestamp().xor(bundle.max_timestamp()).is_some() {
+            return Err(FlashbotsMiddlewareError::MissingParameters);
+        }
+
         let response: SendBundleResponse = self
             .relay
             .request("eth_sendBundle", [bundle])

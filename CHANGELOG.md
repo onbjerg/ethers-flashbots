@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Parameters are now validated before bundles are sent to the relay.
+  Check [the documentation](https://docs.rs/ethers-flashbots/0.4.0/ethers_flashbots/enum.FlashbotsMiddlewareError.html#variant.MissingParameters) for more information.
+
 ### Added
 
 - Added a helper to get the effective gas price of bundles and
