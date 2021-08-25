@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Added a helper to get the effective gas price of bundles and
+  bundle transactions (`SimulatedBundle::effective_gas_price` and `SimulatedTransaction::effective_gas_price`).
+
 ## [0.3.1]
 
 ### Added

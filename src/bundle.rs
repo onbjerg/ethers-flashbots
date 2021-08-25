@@ -256,6 +256,14 @@ pub struct SimulatedTransaction {
     pub error: Option<String>,
 }
 
+impl SimulatedTransaction {
+    /// The effective gas price of the transaction,
+    /// i.e. `coinbase_diff / gas_used`.
+    pub fn effective_gas_price(&self) -> U256 {
+        self.coinbase_diff / self.gas_used
+    }
+}
+
 /// Details of a simulated bundle.
 ///
 /// The details of a bundle that has been simulated.
@@ -293,6 +301,17 @@ pub struct SimulatedBundle {
     /// The simulated transactions in this bundle.
     #[serde(rename = "results")]
     pub transactions: Vec<SimulatedTransaction>,
+}
+
+impl SimulatedBundle {
+    /// The effective gas price of the transaction,
+    /// i.e. `coinbase_diff / gas_used`.
+    ///
+    /// Note that this is also an approximation of the
+    /// bundle's score.
+    pub fn effective_gas_price(&self) -> U256 {
+        self.coinbase_diff / self.gas_used
+    }
 }
 
 /// Represents stats for a submitted bundle.
