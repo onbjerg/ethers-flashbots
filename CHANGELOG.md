@@ -8,10 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.0]
+
 ### Changed
 
 - Parameters are now validated before bundles are sent to the relay.
   Check [the documentation](https://docs.rs/ethers-flashbots/0.4.0/ethers_flashbots/enum.FlashbotsMiddlewareError.html#variant.MissingParameters) for more information.
+- Bumped ethers to 0.5.1
 
 ### Added
 
@@ -79,6 +82,7 @@ Initial release.
 
 <!-- next-url !-->
 [Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/{{tag_name}}...HEAD
+[0.4.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.4.0...HEAD
 [0.3.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.3.1...HEAD
 [0.3.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.3.0...HEAD
 [0.2.2]: https://github.com/onbjerg/ethers-flashbots/compare/0.2.2...HEAD
