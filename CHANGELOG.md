@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Revert reason is now parsed, if there is any.
+
+### Fixed
+
+- `value` on a simulated transaction was incorrectly assumed to be
+  the amount of Ether sent in a transaction. It is now correctly
+  parsed as `Bytes`, since it represents the return data (if any)
+  of the transaction.
+
 ## [0.4.0]
 
 ### Changed

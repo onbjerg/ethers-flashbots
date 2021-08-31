@@ -249,11 +249,12 @@ pub struct SimulatedTransaction {
     #[serde(rename = "toAddress")]
     #[serde(deserialize_with = "deserialize_optional_h160")]
     pub to: Option<Address>,
-    /// The value sent in this transaction.
-    #[serde(deserialize_with = "deserialize_u256")]
-    pub value: U256,
-    /// The reason this transaction reverted (if it did).
+    /// The return value of the transaction.
+    pub value: Option<Bytes>,
+    /// The reason this transaction failed (if it did).
     pub error: Option<String>,
+    /// The revert reason for this transaction, if available.
+    pub revert: Option<String>,
 }
 
 impl SimulatedTransaction {
@@ -389,7 +390,7 @@ mod tests {
         "gasUsed": 21000,
         "toAddress": "0x73625f59CAdc5009Cb458B751b3E7b6b48C06f2C",
         "txHash": "0xa839ee83465657cac01adc1d50d96c1b586ed498120a84a64749c0034b4f19fa",
-        "value": "0x1"
+        "value": "0x01"
       },
       {
         "coinbaseDiff": "10000000000063000",
@@ -427,14 +428,58 @@ mod tests {
         assert_eq!(simulated_bundle.gas_fees, U256::from(126000));
         assert_eq!(simulated_bundle.simulation_block, U64::from(5221585));
         assert_eq!(simulated_bundle.transactions.len(), 3);
-        assert_eq!(simulated_bundle.transactions[0].value, U256::zero());
+        assert_eq!(
+            simulated_bundle.transactions[0].value,
+            Some(Bytes::from(vec![]))
+        );
         assert_eq!(
             simulated_bundle.transactions[0].error,
             Some("execution reverted".into())
         );
         assert_eq!(simulated_bundle.transactions[1].error, None);
-        assert_eq!(simulated_bundle.transactions[1].value, U256::from(0x1));
+        assert_eq!(
+            simulated_bundle.transactions[1].value,
+            Some(Bytes::from(vec![0x1]))
+        );
         assert_eq!(simulated_bundle.transactions[2].to, None);
+    }
+
+    #[test]
+    fn simulated_transaction_deserialize() {
+        let tx: SimulatedTransaction = serde_json::from_str(
+            r#"{
+        "coinbaseDiff": "10000000000063000",
+        "ethSentToCoinbase": "10000000000000000",
+        "fromAddress": "0x02A727155aeF8609c9f7F2179b2a1f560B39F5A0",
+        "gasFees": "63000",
+        "gasPrice": "476190476193",
+        "gasUsed": 21000,
+        "toAddress": "0x",
+        "txHash": "0xa839ee83465657cac01adc1d50d96c1b586ed498120a84a64749c0034b4f19fa",
+        "error": "execution reverted"
+      }"#,
+        )
+        .unwrap();
+        assert_eq!(tx.error, Some("execution reverted".into()));
+
+        let tx: SimulatedTransaction = serde_json::from_str(
+            r#"{
+        "coinbaseDiff": "10000000000063000",
+        "ethSentToCoinbase": "10000000000000000",
+        "fromAddress": "0x02A727155aeF8609c9f7F2179b2a1f560B39F5A0",
+        "gasFees": "63000",
+        "gasPrice": "476190476193",
+        "gasUsed": 21000,
+        "toAddress": "0x",
+        "txHash": "0xa839ee83465657cac01adc1d50d96c1b586ed498120a84a64749c0034b4f19fa",
+        "error": "execution reverted",
+        "revert": "transfer failed"
+      }"#,
+        )
+        .unwrap();
+
+        assert_eq!(tx.error, Some("execution reverted".into()));
+        assert_eq!(tx.revert, Some("transfer failed".into()));
     }
 
     #[test]
