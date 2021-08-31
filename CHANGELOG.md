@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.5.0]
+
 ### Added
 
 - Revert reason is now parsed, if there is any.
@@ -93,6 +95,7 @@ Initial release.
 
 <!-- next-url !-->
 [Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/{{tag_name}}...HEAD
+[0.5.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.5.0...HEAD
 [0.4.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.4.0...HEAD
 [0.3.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.3.1...HEAD
 [0.3.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.3.0...HEAD
