@@ -1,5 +1,5 @@
 use crate::utils::deserialize_u256;
-use ethers_core::types::U256;
+use ethers::core::types::U256;
 use serde::Deserialize;
 
 /// Represents stats for a searcher.

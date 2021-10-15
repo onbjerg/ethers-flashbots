@@ -1,6 +1,6 @@
 use crate::utils::{deserialize_optional_h160, deserialize_u256, deserialize_u64};
 use chrono::{DateTime, Utc};
-use ethers_core::{
+use ethers::core::{
     types::{transaction::response::Transaction, Address, Bytes, TxHash, H256, U256, U64},
     utils::keccak256,
 };
