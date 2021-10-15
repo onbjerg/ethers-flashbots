@@ -1,6 +1,6 @@
 use crate::bundle::BundleHash;
-use ethers_core::types::{Block, TxHash, U64};
-use ethers_providers::{
+use ethers::core::types::{Block, TxHash, U64};
+use ethers::providers::{
     interval, JsonRpcClient, Middleware, Provider, ProviderError, DEFAULT_POLL_INTERVAL,
 };
 use futures_core::stream::Stream;

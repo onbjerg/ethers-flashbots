@@ -32,11 +32,9 @@ futures-core = "0.3"
 pin-project = "1"
 
 # Ethers
-ethers-core = "0.5.1"
-ethers-signers = "0.5.1"
-ethers-providers = "0.5.1"
+ethers = {version = "0.5.2", default-features = false }
 
 [dev-dependencies]
 tokio = { version = "1.7.1", features = ["macros", "rt-multi-thread"] }
-ethers = "0.5.1"
+ethers = {version = "0.5.2", default-features = false }
 anyhow = "1.0"

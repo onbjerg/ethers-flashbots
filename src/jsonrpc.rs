@@ -1,7 +1,7 @@
 // Code adapted from: https://github.com/althea-net/guac_rs/tree/master/web3/src/jsonrpc
 // NOTE: This module only exists since there is no way to use the data structures
 // in the `ethers-providers/src/transports/common.rs` from another crate.
-use ethers_core::types::U256;
+use ethers::core::types::U256;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fmt;

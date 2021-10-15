@@ -2,11 +2,11 @@ use crate::{
     bundle::BundleHash,
     jsonrpc::{JsonRpcError, Request, Response},
 };
-use ethers_core::{
+use ethers::core::{
     types::{H256, U64},
     utils::keccak256,
 };
-use ethers_signers::Signer;
+use ethers::signers::Signer;
 use reqwest::{Client, Error as ReqwestError};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::sync::atomic::{AtomicU64, Ordering};
