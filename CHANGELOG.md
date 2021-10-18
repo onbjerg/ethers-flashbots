@@ -8,7 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-- Upgraded Ethers to 0.5.2 and disabled default features to allow for building on Windows (which lacks IPC support, see https://github.com/gakonst/ethers-rs/issues/393)
+### Changed
+
+- Relaxed version requirement for Ethers - version requirement is now `^0.5.0`.
+- Disabled default Ethers features to allow for building on Windows (which lacks IPC support, see https://github.com/gakonst/ethers-rs/issues/393)
 
 ## [0.5.0]
 
