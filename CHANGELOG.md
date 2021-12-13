@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.7.0]
+
+- Updated to ethers `^0.6.0`
+
 ## [0.6.0]
 
 ### Changed
@@ -102,6 +106,7 @@ Initial release.
 
 <!-- next-url !-->
 [Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/{{tag_name}}...HEAD
+[0.7.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.7.0...HEAD
 [0.6.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.6.0...HEAD
 [0.5.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.5.0...HEAD
 [0.4.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.4.0...HEAD
