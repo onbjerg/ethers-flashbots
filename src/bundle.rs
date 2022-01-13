@@ -13,14 +13,14 @@ pub type BundleHash = H256;
 #[derive(Debug, Clone)]
 pub enum BundleTransaction {
     /// A pre-signed transaction.
-    Signed(Transaction),
+    Signed(Box<Transaction>),
     /// An RLP encoded signed transaction.
     Raw(Bytes),
 }
 
 impl From<Transaction> for BundleTransaction {
     fn from(tx: Transaction) -> Self {
-        Self::Signed(tx)
+        Self::Signed(Box::new(tx))
     }
 }
 
