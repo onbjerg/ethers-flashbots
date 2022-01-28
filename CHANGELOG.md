@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.8.1]
+
+A small patch to fix the documentation on [docs.rs](https://docs.rs).
+
 ## [0.8.0]
 
 ### Added
@@ -112,6 +116,7 @@ Initial release.
 
 <!-- next-url !-->
 [Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/{{tag_name}}...HEAD
+[0.8.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.8.0...0.8.1
 [0.8.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.7.0...0.8.0
 [0.7.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.5.0...0.6.0
