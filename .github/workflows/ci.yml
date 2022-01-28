@@ -19,6 +19,8 @@ jobs:
           toolchain: stable
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: ci
       - name: Run cargo check
         uses: actions-rs/cargo@v1
         with:
@@ -37,6 +39,8 @@ jobs:
           toolchain: stable
           components: rustfmt
       - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: ci
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
         with:
@@ -56,6 +60,8 @@ jobs:
           toolchain: stable
           components: clippy
       - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: ci
       - name: Run clippy
         uses: actions-rs/cargo@v1
         with:
@@ -74,6 +80,8 @@ jobs:
           profile: minimal
           toolchain: stable
       - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: ci
       - name: Run cargo check
         uses: actions-rs/cargo@v1
         with:
