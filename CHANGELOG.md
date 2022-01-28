@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- The basefee for a simulated block can now be specified.
+
 ## [0.7.0]
 
 - Updated to ethers `^0.6.0`

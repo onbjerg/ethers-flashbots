@@ -72,6 +72,10 @@ pub struct BundleRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "timestamp")]
     simulation_timestamp: Option<u64>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "baseFee")]
+    simulation_basefee: Option<u64>,
 }
 
 pub fn serialize_txs<S>(txs: &[BundleTransaction], s: S) -> Result<S::Ok, S::Error>
@@ -178,6 +182,23 @@ impl BundleRequest {
     /// Set the UNIX timestamp used for bundle simulation.
     pub fn set_simulation_timestamp(mut self, timestamp: u64) -> Self {
         self.simulation_timestamp = Some(timestamp);
+        self
+    }
+
+    /// Get the base gas fee for bundle simulation (if any).
+    ///
+    /// See [`eth_callBundle`][fb_call_bundle] in the Flashbots documentation
+    /// for more information on bundle simulations.
+    ///
+    /// [fb_call_bundle]: https://docs.flashbots.net/flashbots-auction/searchers/advanced/rpc-endpoint#eth_callbundle
+    pub fn simulation_basefee(&self) -> Option<u64> {
+        self.simulation_basefee
+    }
+
+    /// Set the base gas fee for bundle simulation (if any).
+    /// Optional: will default to a value chosen by the node if not specified.
+    pub fn set_simulation_basefee(mut self, basefee: u64) -> Self {
+        self.simulation_basefee = Some(basefee);
         self
     }
 
@@ -351,11 +372,12 @@ mod tests {
             .set_min_timestamp(1000)
             .set_max_timestamp(2000)
             .set_simulation_timestamp(1000)
-            .set_simulation_block(1.into());
+            .set_simulation_block(1.into())
+            .set_simulation_basefee(333333);
 
         assert_eq!(
             &serde_json::to_string(&bundle).unwrap(),
-            r#"{"txs":["0x01","0x02"],"revertingTxHashes":["0xf2ee15ea639b73fa3db9b34a245bdfa015c260c598b211bf05a1ecc4b3e3b4f2"],"blockNumber":"0x2","minTimestamp":1000,"maxTimestamp":2000,"stateBlockNumber":"0x1","timestamp":1000}"#
+            r#"{"txs":["0x01","0x02"],"revertingTxHashes":["0xf2ee15ea639b73fa3db9b34a245bdfa015c260c598b211bf05a1ecc4b3e3b4f2"],"blockNumber":"0x2","minTimestamp":1000,"maxTimestamp":2000,"stateBlockNumber":"0x1","timestamp":1000,"baseFee":333333}"#
         );
     }
 
