@@ -48,7 +48,7 @@ jobs:
           args: -- --check
  
   clippy:
-    name: Rust project
+    name: clippy
     runs-on: ubuntu-latest
     needs: [check]
     steps:
@@ -69,7 +69,7 @@ jobs:
           args: -- -D warnings
  
   test:
-    name: Rust project
+    name: test
     runs-on: ubuntu-latest
     needs: [check]
     steps:
