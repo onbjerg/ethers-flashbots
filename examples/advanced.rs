@@ -25,6 +25,9 @@ async fn main() -> Result<()> {
         wallet,
     );
 
+    // get last block number
+    let block_number = client.get_block_number().await?;
+
     // Build a custom bundle that pays 0x0000000000000000000000000000000000000000
     let tx = {
         let mut inner: TypedTransaction = TransactionRequest::pay(Address::zero(), 100).into();
@@ -33,7 +36,8 @@ async fn main() -> Result<()> {
     };
     let signature = client.signer().sign_transaction(&tx).await?;
     let bundle = BundleRequest::new()
-        .push_transaction(tx.rlp_signed(client.signer().chain_id(), &signature));
+        .push_transaction(tx.rlp_signed(client.signer().chain_id(), &signature))
+        .set_block(block_number + 1);
 
     // Simulate it
     let simulated_bundle = client.inner().simulate_bundle(&bundle).await?;
