@@ -54,6 +54,7 @@ impl<'a, P: JsonRpcClient> PendingBundle<'a, P> {
     }
 
     /// Get the bundle hash for this pending bundle.
+    #[deprecated(note = "use the bundle_hash field instead")]
     pub fn bundle_hash(&self) -> BundleHash {
         self.bundle_hash
     }
