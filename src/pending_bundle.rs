@@ -28,9 +28,9 @@ use thiserror::Error;
 /// [fb_debug]: https://docs.flashbots.net/flashbots-auction/searchers/faq/#why-didnt-my-transaction-get-included
 #[pin_project]
 pub struct PendingBundle<'a, P> {
-    bundle_hash: BundleHash,
-    block: U64,
-    transactions: Vec<TxHash>,
+    pub bundle_hash: BundleHash,
+    pub block: U64,
+    pub transactions: Vec<TxHash>,
     provider: &'a Provider<P>,
     state: PendingBundleState<'a>,
     interval: Box<dyn Stream<Item = ()> + Send + Unpin>,
@@ -54,6 +54,7 @@ impl<'a, P: JsonRpcClient> PendingBundle<'a, P> {
     }
 
     /// Get the bundle hash for this pending bundle.
+    #[deprecated(note = "use the bundle_hash field instead")]
     pub fn bundle_hash(&self) -> BundleHash {
         self.bundle_hash
     }
