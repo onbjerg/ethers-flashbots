@@ -3,7 +3,7 @@ use ethers::core::types::U256;
 use serde::Deserialize;
 
 /// Represents stats for a searcher.
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct UserStats {
     /// Whether the searcher is high priority or not.
     pub is_high_priority: bool,

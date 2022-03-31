@@ -341,7 +341,7 @@ impl SimulatedBundle {
 /// See [Flashbots docs][fb_getbundlestats] for more information.
 ///
 /// [fb_getbundlestats]: https://docs.flashbots.net/flashbots-auction/searchers/advanced/rpc-endpoint/#flashbots_getbundlestats
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct BundleStats {
     /// Whether the bundle was simulated.
