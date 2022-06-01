@@ -1,4 +1,4 @@
-use ethers::core::types::{H160, U256, U64};
+use ethers_core::types::{H160, U256, U64};
 use serde::{de, Deserialize};
 use serde_json::Value;
 use std::str::FromStr;

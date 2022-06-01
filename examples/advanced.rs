@@ -1,6 +1,6 @@
 use anyhow::Result;
-use ethers::core::{rand::thread_rng, types::transaction::eip2718::TypedTransaction};
 use ethers::prelude::*;
+use ethers_core::{rand::thread_rng, types::transaction::eip2718::TypedTransaction};
 use ethers_flashbots::*;
 use std::convert::TryFrom;
 use url::Url;

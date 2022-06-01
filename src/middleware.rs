@@ -5,12 +5,12 @@ use crate::{
     UserStats,
 };
 use async_trait::async_trait;
-use ethers::core::{
+use ethers_core::{
     types::{BlockNumber, Bytes, U64},
     utils::keccak256,
 };
-use ethers::providers::{FromErr, Middleware, PendingTransaction};
-use ethers::signers::Signer;
+use ethers_providers::{FromErr, Middleware, PendingTransaction};
+use ethers_signers::Signer;
 use thiserror::Error;
 use url::Url;
 

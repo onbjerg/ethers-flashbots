@@ -27,7 +27,7 @@ ethers-flashbots = { git = "https://github.com/onbjerg/ethers-flashbots" }
 
 ```rs
 use anyhow::Result;
-use ethers::core::rand::thread_rng;
+use  ethers_core::rand::thread_rng;
 use ethers::prelude::*;
 use ethers_flashbots::*;
 use std::convert::TryFrom;
