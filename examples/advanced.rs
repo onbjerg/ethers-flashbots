@@ -36,7 +36,7 @@ async fn main() -> Result<()> {
     };
     let signature = client.signer().sign_transaction(&tx).await?;
     let bundle = BundleRequest::new()
-        .push_transaction(tx.rlp_signed(client.signer().chain_id(), &signature))
+        .push_transaction(tx.rlp_signed(&signature))
         .set_block(block_number + 1)
         .set_simulation_block(block_number)
         .set_simulation_timestamp(0);
