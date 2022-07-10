@@ -26,7 +26,7 @@ pub struct Relay<S> {
     id: AtomicU64,
     client: Client,
     url: Url,
-    signer: S,
+    signer: Option<S>,
 }
 
 /// Errors for relay requests.
@@ -57,7 +57,7 @@ pub enum RelayError<S: Signer> {
 
 impl<S: Signer> Relay<S> {
     /// Initializes a new relay client.
-    pub fn new(url: impl Into<Url>, signer: S) -> Self {
+    pub fn new(url: impl Into<Url>, signer: Option<S>) -> Self {
         Self {
             id: AtomicU64::new(0),
             client: Client::new(),
@@ -78,29 +78,28 @@ impl<S: Signer> Relay<S> {
 
         let payload = Request::new(next_id, method, params);
 
-        let signature = self
-            .signer
-            .sign_message(format!(
-                "0x{:x}",
-                H256::from(keccak256(
-                    serde_json::to_string(&payload)
-                        .map_err(RelayError::RequestSerdeJson)?
-                        .as_bytes()
-                ))
-            ))
-            .await
-            .map_err(RelayError::SignerError)?;
+        let mut req = self.client.post(self.url.as_ref());
 
-        let res = self
-            .client
-            .post(self.url.as_ref())
-            .header(
+        if let Some(signer) = &self.signer {
+            let signature = signer
+                .sign_message(format!(
+                    "0x{:x}",
+                    H256::from(keccak256(
+                        serde_json::to_string(&payload)
+                            .map_err(RelayError::RequestSerdeJson)?
+                            .as_bytes()
+                    ))
+                ))
+                .await
+                .map_err(RelayError::SignerError)?;
+
+            req = req.header(
                 "X-Flashbots-Signature",
-                format!("{:?}:0x{}", self.signer.address(), signature),
-            )
-            .json(&payload)
-            .send()
-            .await?;
+                format!("{:?}:0x{}", signer.address(), signature),
+            );
+        }
+
+        let res = req.json(&payload).send().await?;
         let status = res.error_for_status_ref();
 
         match status {

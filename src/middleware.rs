@@ -104,6 +104,7 @@ impl<M: Middleware, S: Signer> FromErr<M::Error> for FlashbotsMiddlewareError<M,
 pub struct FlashbotsMiddleware<M, S> {
     inner: M,
     relay: Relay<S>,
+    simulation_relay: Option<Relay<S>>,
 }
 
 impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
@@ -113,13 +114,28 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
     pub fn new(inner: M, relay_url: impl Into<Url>, relay_signer: S) -> Self {
         Self {
             inner,
-            relay: Relay::new(relay_url, relay_signer),
+            relay: Relay::new(relay_url, Some(relay_signer)),
+            simulation_relay: None,
         }
     }
 
     /// Get the relay client used by the middleware.
     pub fn relay(&self) -> &Relay<S> {
         &self.relay
+    }
+
+    /// Get the relay client used by the middleware to simulate
+    /// bundles if set.
+    pub fn simulation_relay(&self) -> Option<&Relay<S>> {
+        self.simulation_relay.as_ref()
+    }
+
+    /// Set a separate relay to use for simulating bundles.
+    ///
+    /// This can either be a full Flashbots relay or a node that implements
+    /// the `eth_callBundle` remote procedure call.
+    pub fn set_simulation_relay(&mut self, relay_url: impl Into<Url>) {
+        self.simulation_relay = Some(Relay::new(relay_url, None));
     }
 
     /// Simulate a bundle.
@@ -137,7 +153,9 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
             .and(bundle.simulation_timestamp())
             .ok_or(FlashbotsMiddlewareError::MissingParameters)?;
 
-        self.relay
+        self.simulation_relay
+            .as_ref()
+            .unwrap_or(&self.relay)
             .request("eth_callBundle", [bundle])
             .await
             .map_err(FlashbotsMiddlewareError::RelayError)
