@@ -26,7 +26,7 @@ ethers-flashbots = { git = "https://github.com/onbjerg/ethers-flashbots" }
 ### Usage
 
 ```rs
-use anyhow::Result;
+use eyre::Result;
 use ethers::core::rand::thread_rng;
 use ethers::prelude::*;
 use ethers_flashbots::*;
@@ -60,7 +60,7 @@ async fn main() -> Result<()> {
     // Get the receipt
     let receipt = pending_tx
         .await?
-        .ok_or_else(|| anyhow::format_err!("tx not included"))?;
+        .ok_or_else(|| eyre::format_err!("tx not included"))?;
     let tx = client.get_transaction(receipt.transaction_hash).await?;
 
     println!("Sent transaction: {}\n", serde_json::to_string(&tx)?);
