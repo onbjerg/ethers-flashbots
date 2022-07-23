@@ -37,4 +37,4 @@ ethers = { version = "^0.13.0", default-features = false }
 [dev-dependencies]
 tokio = { version = "1.7.1", features = ["macros", "rt-multi-thread"] }
 ethers = { version = "^0.13.0", default-features = false }
-anyhow = "1.0"
+eyre = "0.6"

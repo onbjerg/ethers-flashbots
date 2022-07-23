@@ -1,7 +1,7 @@
-use anyhow::Result;
 use ethers::core::rand::thread_rng;
 use ethers::prelude::*;
 use ethers_flashbots::*;
+use eyre::Result;
 use std::convert::TryFrom;
 use url::Url;
 
@@ -32,7 +32,7 @@ async fn main() -> Result<()> {
     // Get the receipt
     let receipt = pending_tx
         .await?
-        .ok_or_else(|| anyhow::format_err!("tx not included"))?;
+        .ok_or_else(|| eyre::eyre!("tx not included"))?;
     let tx = client.get_transaction(receipt.transaction_hash).await?;
 
     println!("Sent transaction: {}\n", serde_json::to_string(&tx)?);
