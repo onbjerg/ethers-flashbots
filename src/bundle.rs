@@ -111,7 +111,7 @@ impl BundleRequest {
 
     /// Adds a revertible transaction to the bundle request.
     ///
-    /// This differs from [`BundleRequest::push_transaction`] in that the bund will still be
+    /// This differs from [`BundleRequest::push_transaction`] in that the bundle will still be
     /// considered valid if the transaction reverts.
     pub fn push_revertible_transaction<T: Into<BundleTransaction>>(mut self, tx: T) -> Self {
         let tx = tx.into();
@@ -518,8 +518,8 @@ mod tests {
         )
         .unwrap();
 
-        assert_eq!(bundle_stats.is_simulated, true);
-        assert_eq!(bundle_stats.is_sent_to_miners, true);
+        assert!(bundle_stats.is_simulated);
+        assert!(bundle_stats.is_sent_to_miners);
         assert_eq!(
             bundle_stats.simulated_at.unwrap().to_rfc3339(),
             "2021-08-06T21:36:06.317+00:00"

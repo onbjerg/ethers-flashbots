@@ -46,7 +46,7 @@ mod tests {
         )
         .unwrap();
 
-        assert_eq!(user_stats.is_high_priority, true);
+        assert!(user_stats.is_high_priority);
         assert_eq!(
             user_stats.all_time_miner_payments,
             U256::from_dec_str("1280749594841588639").unwrap()
