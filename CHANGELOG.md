@@ -8,7 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.10.0]
+
+- Replaced `anyhow` with `eyre`
+- Updated to ethers `^0.17.0`
+
 ## [0.9.0]
+
+### Changed
 
 - Updated to ethers `^0.13.0`
 
@@ -33,6 +40,8 @@ A small patch to fix the documentation on [docs.rs](https://docs.rs).
 - The basefee for a simulated block can now be specified.
 
 ## [0.7.0]
+
+### Changed
 
 - Updated to ethers `^0.6.0`
 
@@ -129,7 +138,8 @@ A small patch to fix the documentation on [docs.rs](https://docs.rs).
 Initial release.
 
 <!-- next-url !-->
-[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.9.0...HEAD
+[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.10.0...HEAD
+[0.10.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.8.2...0.9.0
 [0.8.2]: https://github.com/onbjerg/ethers-flashbots/compare/0.8.1...0.8.2
 [0.8.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.8.0...0.8.1
