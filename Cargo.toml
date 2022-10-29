@@ -23,7 +23,7 @@ chrono = { version = "0.4.19", features = ["default", "serde"] }
 
 # HTTP
 url = { version = "2.2.2", default-features = false }
-reqwest = "0.11"
+reqwest = { version = "0.11", default-features = false }
 
 # Async
 async-trait = { version = "0.1.50", default-features = false }
@@ -38,3 +38,8 @@ ethers = { version = "^0.17.0", default-features = false }
 tokio = { version = "1.7.1", features = ["macros", "rt-multi-thread"] }
 ethers = { version = "^0.17.0", default-features = false }
 eyre = "0.6"
+
+[features]
+default = ['openssl']
+openssl = ['ethers/openssl', 'reqwest/default-tls']
+rustls = ['ethers/rustls', 'reqwest/rustls-tls']
