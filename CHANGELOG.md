@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.11.0]
+
+### Changed
+
+- Addd a `rustls` feature flag to use native TLS over OpenSSL
+- Bumped `thiserror` to `1.0.37`
+- Bumped `chrono` to `0.4.22`
+- Bumped `url` to `2.3.1`
+- Bumped `async-trait` to `0.1.58`
+- Bumped `ethers` to `1.0.0`
+
 ## [0.10.0]
 
 - Replaced `anyhow` with `eyre`
@@ -138,7 +149,8 @@ A small patch to fix the documentation on [docs.rs](https://docs.rs).
 Initial release.
 
 <!-- next-url !-->
-[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.10.0...HEAD
+[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.11.0...HEAD
+[0.11.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.8.2...0.9.0
 [0.8.2]: https://github.com/onbjerg/ethers-flashbots/compare/0.8.1...0.8.2
