@@ -48,5 +48,5 @@ jobs:
         uses: taiki-e/install-action@nextest
 
       - name: Run tests
-        run: cargo nextest run --locked --all-features
+        run: cargo nextest run --all-features
 
