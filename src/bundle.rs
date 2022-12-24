@@ -353,8 +353,10 @@ pub struct BundleStats {
     /// When the bundle was received by the bundle API.
     pub received_at: Option<DateTime<Utc>>,
     /// A list of times at which builders selected the bundle to be included in the target block.
+    #[serde(default = "Vec::new")]
     pub considered_by_builders_at: Vec<BuilderEntry>,
     /// A list of times at which builders sealed a block containing the bundle.
+    #[serde(default = "Vec::new")]
     pub sealed_by_builders_at: Vec<BuilderEntry>,
 }
 
