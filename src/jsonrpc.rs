@@ -7,8 +7,8 @@ use serde_json::Value;
 use std::fmt;
 use thiserror::Error;
 
-#[derive(Serialize, Deserialize, Debug, Clone, Error)]
 /// A JSON-RPC 2.0 error
+#[derive(Serialize, Deserialize, Debug, Clone, Error)]
 pub struct JsonRpcError {
     /// The error code
     pub code: i64,
