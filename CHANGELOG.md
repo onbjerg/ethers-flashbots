@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.12.0]
+
 ### Added
 
 - It is now possible to use your own endpoint for simulating bundles. Bundles will be sent over JSON-RPC to the given endpoint. The JSON-RPC method used is `eth_callBundle`. See `Middleware::set_simulation_relay`.
@@ -157,7 +159,8 @@ A small patch to fix the documentation on [docs.rs](https://docs.rs).
 Initial release.
 
 <!-- next-url !-->
-[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.11.0...HEAD
+[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.12.0...HEAD
+[0.12.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.8.2...0.9.0
