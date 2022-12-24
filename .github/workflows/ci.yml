@@ -1,4 +1,4 @@
-name: CI
+name: ci
 
 on:
   push:
@@ -7,83 +7,46 @@ on:
     branches: [master, main]
 
 jobs:
-  check:
-    name: check
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout sources
+        uses: actions/checkout@v3
       - name: Install toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@nightly
         with:
-          profile: minimal
-          toolchain: stable
           components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
         with:
-          sharedKey: ci
-      - name: Run cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
+          cache-on-failure: true
 
-  fmt:
-    name: fmt
-    runs-on: ubuntu-latest
-    needs: [check]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          components: rustfmt
-      - uses: Swatinem/rust-cache@v1
-        with:
-          sharedKey: ci
-      - name: Run cargo fmt
+      - name: cargo fmt
         uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: -- --check
- 
-  clippy:
-    name: clippy
-    runs-on: ubuntu-latest
-    needs: [check]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
+          args: --all --check
+
+      - name: cargo clippy
+        uses: actions-rs/clippy-check@v1
         with:
-          profile: minimal
-          toolchain: stable
-          components: clippy
-      - uses: Swatinem/rust-cache@v1
-        with:
-          sharedKey: ci
-      - name: Run clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
- 
+          args: --all --all-features
+          token: ${{ secrets.GITHUB_TOKEN }} 
+
   test:
     name: test
     runs-on: ubuntu-latest
-    needs: [check]
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout sources
+        uses: actions/checkout@v3
       - name: Install toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@nightly
+      - uses: Swatinem/rust-cache@v2
         with:
-          profile: minimal
-          toolchain: stable
-      - uses: Swatinem/rust-cache@v1
-        with:
-          sharedKey: ci
-      - name: Run cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
- 
+          cache-on-failure: true
+
+      - name: Install latest nextest release
+        uses: taiki-e/install-action@nextest
+
+      - name: Run tests
+        run: cargo nextest run --all-features
+
