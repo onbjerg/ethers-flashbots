@@ -344,18 +344,28 @@ impl SimulatedBundle {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct BundleStats {
-    /// Whether the bundle was simulated.
-    pub is_simulated: bool,
-    /// Whether the bundle was sent to miners.
-    pub is_sent_to_miners: bool,
     /// Whether the bundle is high priority.
     pub is_high_priority: bool,
+    /// Whether the bundle was simulated.
+    pub is_simulated: bool,
     /// When the bundle was simulated
     pub simulated_at: Option<DateTime<Utc>>,
-    /// When the bundle was submitted
-    pub submitted_at: Option<DateTime<Utc>>,
-    /// When the bundle was sent to miners
-    pub sent_to_miners_at: Option<DateTime<Utc>>,
+    /// When the bundle was received by the bundle API.
+    pub received_at: Option<DateTime<Utc>>,
+    /// A list of times at which builders selected the bundle to be included in the target block.
+    pub considered_by_builders_at: Vec<BuilderEntry>,
+    /// A list of times at which builders sealed a block containing the bundle.
+    pub sealed_by_builders_at: Vec<BuilderEntry>,
+}
+
+/// A builder log entry is a pairing of a builder's public key and a timestamp at which they
+/// performed some operation on a bundle.
+#[derive(Deserialize, Debug)]
+pub struct BuilderEntry {
+    /// The public key of the builder.
+    pub pubkey: Bytes,
+    /// The timestamp of this log entry.
+    pub timestamp: Option<DateTime<Utc>>,
 }
 
 #[cfg(test)]
@@ -508,29 +518,40 @@ mod tests {
     fn bundle_stats_deserialize() {
         let bundle_stats: BundleStats = serde_json::from_str(
             r#"{
-  "isSimulated": true,
-  "isSentToMiners": true,
-  "isHighPriority": true,
-  "simulatedAt": "2021-08-06T21:36:06.317Z",
-  "submittedAt": "2021-08-06T21:36:06.250Z",
-  "sentToMinersAt": "2021-08-06T21:36:06.343Z"
-}"#,
+                "isHighPriority": true,
+                "isSimulated": true,
+                "simulatedAt": "2022-10-06T21:36:06.317Z",
+                "receivedAt": "2022-10-06T21:36:06.250Z",
+                "consideredByBuildersAt": [{
+                    "pubkey": "0x81babeec8c9f2bb9c329fd8a3b176032fe0ab5f3b92a3f44d4575a231c7bd9c31d10b6328ef68ed1e8c02a3dbc8e80f9",
+                    "timestamp": "2022-10-06T21:36:06.343Z"
+                }, {
+                    "pubkey": "0x81beef03aafd3dd33ffd7deb337407142c80fea2690e5b3190cfc01bde5753f28982a7857c96172a75a234cb7bcb994f",
+                    "timestamp": "2022-10-06T21:36:06.394Z"
+                }, {
+                    "pubkey": "0xa1dead1e65f0a0eee7b5170223f20c8f0cbf122eac3324d61afbdb33a8885ff8cab2ef514ac2c7698ae0d6289ef27fcf",
+                    "timestamp": "2022-10-06T21:36:06.322Z"
+                }],
+                "sealedByBuildersAt": [{
+                    "pubkey": "0x81beef03aafd3dd33ffd7deb337407142c80fea2690e5b3190cfc01bde5753f28982a7857c96172a75a234cb7bcb994f",
+                    "timestamp": "2022-10-06T21:36:07.742Z"
+                }]
+            }"#,
         )
         .unwrap();
 
+        assert!(bundle_stats.is_high_priority);
         assert!(bundle_stats.is_simulated);
-        assert!(bundle_stats.is_sent_to_miners);
         assert_eq!(
             bundle_stats.simulated_at.unwrap().to_rfc3339(),
-            "2021-08-06T21:36:06.317+00:00"
+            "2022-10-06T21:36:06.317+00:00"
         );
         assert_eq!(
-            bundle_stats.submitted_at.unwrap().to_rfc3339(),
-            "2021-08-06T21:36:06.250+00:00"
+            bundle_stats.received_at.unwrap().to_rfc3339(),
+            "2022-10-06T21:36:06.250+00:00"
         );
-        assert_eq!(
-            bundle_stats.sent_to_miners_at.unwrap().to_rfc3339(),
-            "2021-08-06T21:36:06.343+00:00"
-        );
+
+        assert_eq!(bundle_stats.considered_by_builders_at.len(), 3);
+        assert_eq!(bundle_stats.sealed_by_builders_at.len(), 1);
     }
 }

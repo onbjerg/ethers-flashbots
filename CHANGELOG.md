@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- It is now possible to use your own endpoint for simulating bundles. Bundles will be sent over JSON-RPC to the given endpoint. The JSON-RPC method used is `eth_callBundle`. See `Middleware::set_simulation_relay`.
+
+### Changed
+
+- The library now uses the new `flashbots_getUserStatsV2` and `flashbots_getBundleStatsV2` endpoints. **If you need the old endpoints, pin your version to 0.11.0.**
+
 ## [0.11.0]
 
 ### Changed

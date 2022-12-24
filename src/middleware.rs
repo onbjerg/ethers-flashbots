@@ -203,7 +203,7 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
     ) -> Result<BundleStats, FlashbotsMiddlewareError<M, S>> {
         self.relay
             .request(
-                "flashbots_getBundleStats",
+                "flashbots_getBundleStatsV2",
                 [GetBundleStatsParams {
                     bundle_hash,
                     block_number,
@@ -226,7 +226,7 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
 
         self.relay
             .request(
-                "flashbots_getUserStats",
+                "flashbots_getUserStatsV2",
                 [GetUserStatsParams {
                     block_number: latest_block,
                 }],
