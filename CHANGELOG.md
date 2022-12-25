@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.12.1]
+
+### Fixed
+
+- Handle optional fields in the response of `flashbots_getBundleStatsV2`.
+
 ## [0.12.0]
 
 ### Added
@@ -159,7 +165,8 @@ A small patch to fix the documentation on [docs.rs](https://docs.rs).
 Initial release.
 
 <!-- next-url !-->
-[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.12.0...HEAD
+[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.12.1...HEAD
+[0.12.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.12.0...0.12.1
 [0.12.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.9.0...0.10.0
