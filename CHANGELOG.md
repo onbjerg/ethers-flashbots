@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Bumped `ethers` to `1.5.0` and fixed middleware breaking changes
+
 ## [0.12.1]
 
 ### Fixed
