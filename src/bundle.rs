@@ -109,6 +109,16 @@ impl BundleRequest {
         self
     }
 
+    /// Adds a transaction to the bundle request.
+    ///
+    /// This function takes a mutable reference to `self` and adds the specified
+    /// transaction to the `transactions` vector. The added transaction can either
+    /// be a novel transaction that you have crafted, or it can be from one of the
+    /// mempool APIs.
+    pub fn add_transaction<T: Into<BundleTransaction>>(&mut self, tx: T) {
+        self.transactions.push(tx.into());
+    }
+
     /// Adds a revertible transaction to the bundle request.
     ///
     /// This differs from [`BundleRequest::push_transaction`] in that the bundle will still be
@@ -124,6 +134,24 @@ impl BundleRequest {
         self.revertible_transaction_hashes.push(tx_hash);
 
         self
+    }
+
+    /// Adds a revertible transaction to the bundle request.
+    ///
+    /// This function takes a mutable reference to `self` and adds the specified
+    /// revertible transaction to the `transactions` vector. The added transaction can either
+    /// be a novel transaction that you have crafted, or it can be from one of the
+    /// mempool APIs. Unlike the `push_transaction` method, the bundle will still be considered
+    /// valid even if the added transaction reverts.
+    pub fn add_revertible_transaction<T: Into<BundleTransaction>>(&mut self, tx: T) {
+        let tx = tx.into();
+        self.transactions.push(tx.clone());
+
+        let tx_hash: H256 = match tx {
+            BundleTransaction::Signed(inner) => inner.hash(),
+            BundleTransaction::Raw(inner) => keccak256(inner).into(),
+        };
+        self.revertible_transaction_hashes.push(tx_hash);
     }
 
     /// Get a reference to the transactions currently in the bundle request.
@@ -390,6 +418,24 @@ mod tests {
         assert_eq!(
             &serde_json::to_string(&bundle).unwrap(),
             r#"{"txs":["0x01","0x02"],"revertingTxHashes":["0xf2ee15ea639b73fa3db9b34a245bdfa015c260c598b211bf05a1ecc4b3e3b4f2"],"blockNumber":"0x2","minTimestamp":1000,"maxTimestamp":2000,"stateBlockNumber":"0x1","timestamp":1000,"baseFee":333333}"#
+        );
+
+        let mut bundle = BundleRequest::new()
+            .push_transaction(Bytes::from(vec![0x1]))
+            .push_revertible_transaction(Bytes::from(vec![0x2]))
+            .set_block(2.into())
+            .set_min_timestamp(1000)
+            .set_max_timestamp(2000)
+            .set_simulation_timestamp(1000)
+            .set_simulation_block(1.into())
+            .set_simulation_basefee(333333);
+
+        bundle.add_transaction(Bytes::from(vec![0x3]));
+        bundle.add_revertible_transaction(Bytes::from(vec![0x4]));
+
+        assert_eq!(
+            &serde_json::to_string(&bundle).unwrap(),
+            r#"{"txs":["0x01","0x02","0x03","0x04"],"revertingTxHashes":["0xf2ee15ea639b73fa3db9b34a245bdfa015c260c598b211bf05a1ecc4b3e3b4f2","0xf343681465b9efe82c933c3e8748c70cb8aa06539c361de20f72eac04e766393"],"blockNumber":"0x2","minTimestamp":1000,"maxTimestamp":2000,"stateBlockNumber":"0x1","timestamp":1000,"baseFee":333333}"#
         );
     }
 
