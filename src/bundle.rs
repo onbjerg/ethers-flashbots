@@ -419,7 +419,10 @@ mod tests {
             &serde_json::to_string(&bundle).unwrap(),
             r#"{"txs":["0x01","0x02"],"revertingTxHashes":["0xf2ee15ea639b73fa3db9b34a245bdfa015c260c598b211bf05a1ecc4b3e3b4f2"],"blockNumber":"0x2","minTimestamp":1000,"maxTimestamp":2000,"stateBlockNumber":"0x1","timestamp":1000,"baseFee":333333}"#
         );
+    }
 
+    #[test]
+    fn bundle_serialize_add_transactions() {
         let mut bundle = BundleRequest::new()
             .push_transaction(Bytes::from(vec![0x1]))
             .push_revertible_transaction(Bytes::from(vec![0x2]))
@@ -482,7 +485,7 @@ mod tests {
         "toAddress": "0x",
         "txHash": "0xa839ee83465657cac01adc1d50d96c1b586ed498120a84a64749c0034b4f19fa",
         "value": "0x"
-      } 
+      }
     ],
     "stateBlockNumber": 5221585,
     "totalGasUsed": 42000
