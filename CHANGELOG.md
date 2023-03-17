@@ -176,7 +176,7 @@ Initial release.
 
 <!-- next-url !-->
 [Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.13.0...HEAD
-[0.12.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.12.1...0.13.0
+[0.13.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.12.1...0.13.0
 [0.12.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.12.0...0.12.1
 [0.12.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.10.0...0.11.0
