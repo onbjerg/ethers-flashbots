@@ -76,6 +76,9 @@ pub struct BundleRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "baseFee")]
     simulation_basefee: Option<u64>,
+
+    #[serde(rename = "replacementUuid")]
+    uuid: Option<uuid::Uuid>,
 }
 
 pub fn serialize_txs<S>(txs: &[BundleTransaction], s: S) -> Result<S::Ok, S::Error>
@@ -97,6 +100,15 @@ impl BundleRequest {
     /// Creates an empty bundle request.
     pub fn new() -> Self {
         Default::default()
+    }
+
+    pub fn set_uuid(mut self, uuid: uuid::Uuid) -> Self {
+        self.uuid = Some(uuid);
+        self
+    }
+
+    pub fn get_uuid(&self) -> Option<uuid::Uuid> {
+        return self.uuid;
     }
 
     /// Adds a transaction to the bundle request.

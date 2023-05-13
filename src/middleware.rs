@@ -202,6 +202,7 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
             response.bundle_hash,
             bundle.block().unwrap(),
             bundle.transaction_hashes(),
+            bundle.get_uuid(),
             self.provider(),
         ))
     }

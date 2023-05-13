@@ -31,6 +31,7 @@ pub struct PendingBundle<'a, P> {
     pub bundle_hash: BundleHash,
     pub block: U64,
     pub transactions: Vec<TxHash>,
+    pub uuid: Option<uuid::Uuid>,
     provider: &'a Provider<P>,
     state: PendingBundleState<'a>,
     interval: Box<dyn Stream<Item = ()> + Send + Unpin>,
@@ -41,6 +42,7 @@ impl<'a, P: JsonRpcClient> PendingBundle<'a, P> {
         bundle_hash: BundleHash,
         block: U64,
         transactions: Vec<TxHash>,
+        uuid: Option<uuid::Uuid>,
         provider: &'a Provider<P>,
     ) -> Self {
         Self {
@@ -50,6 +52,7 @@ impl<'a, P: JsonRpcClient> PendingBundle<'a, P> {
             provider,
             state: PendingBundleState::PausedGettingBlock,
             interval: Box::new(interval(DEFAULT_POLL_INTERVAL)),
+            uuid,
         }
     }
 
