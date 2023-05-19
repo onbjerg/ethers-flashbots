@@ -99,16 +99,11 @@ impl<'a, P: JsonRpcClient> Future for PendingBundle<'a, P> {
                     return Poll::Pending;
                 }
 
-                // Check if the bundle transactions are present in the block
-                // Since a bundle cannot be divided, we only need to check
-                // if the first transaction was included.
-                //
-                // Note: The indexed access is safe, since empty bundles
-                // (i.e. bundles with no transactions) cannot be submitted.
-                let included = block
+                // Check if all transactions of the bundle are present in the block
+                let included: bool = this
                     .transactions
                     .iter()
-                    .any(|tx_hash| *tx_hash == this.transactions[0]);
+                    .all(|tx_hash| block.transactions.contains(tx_hash));
 
                 *this.state = PendingBundleState::Completed;
                 if included {
