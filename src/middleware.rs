@@ -1,4 +1,3 @@
-
 use crate::{
     bundle::{BundleHash, BundleRequest, BundleStats, SimulatedBundle},
     pending_bundle::PendingBundle,
@@ -293,7 +292,6 @@ where
     }
 }
 
-
 /// A middleware used to broadcast bundles to multiple builders.
 ///
 /// **NOTE**: This middleware does **NOT** sign your transactions. Use
@@ -316,7 +314,7 @@ where
 /// ```
 /// use ethers::prelude::*;
 /// use std::convert::TryFrom;
-/// use ethers_flashbots::FlashbotsMiddleware;
+/// use ethers_flashbots::BroadcasterMiddleware;
 /// use url::Url;
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
@@ -361,13 +359,21 @@ impl<M: Middleware, S: Signer> BroadcasterMiddleware<M, S> {
     /// Initialize a new Flashbots middleware.
     ///
     /// The signer is used to sign requests to the relay.
-    pub fn new(inner: M, relay_urls: Vec<Url>, simulation_relay: impl Into<Url>, relay_signer: S) -> Self
+    pub fn new(
+        inner: M,
+        relay_urls: Vec<Url>,
+        simulation_relay: impl Into<Url>,
+        relay_signer: S,
+    ) -> Self
     where
-    S: Clone,
+        S: Clone,
     {
         Self {
             inner,
-            relays: relay_urls.into_iter().map(|r| Relay::new(r, Some(relay_signer.clone()))).collect(),
+            relays: relay_urls
+                .into_iter()
+                .map(|r| Relay::new(r, Some(relay_signer.clone())))
+                .collect(),
             simulation_relay: Relay::new(simulation_relay, None),
         }
     }
@@ -412,29 +418,40 @@ impl<M: Middleware, S: Signer> BroadcasterMiddleware<M, S> {
     pub async fn send_bundle(
         &self,
         bundle: &BundleRequest,
-    ) -> Result<Vec<Result<PendingBundle<'_, <Self as Middleware>::Provider>, FlashbotsMiddlewareError<M, S>>>, FlashbotsMiddlewareError<M, S>>
-    {
+    ) -> Result<
+        Vec<
+            Result<
+                PendingBundle<'_, <Self as Middleware>::Provider>,
+                FlashbotsMiddlewareError<M, S>,
+            >,
+        >,
+        FlashbotsMiddlewareError<M, S>,
+    > {
         // The target block must be set
         bundle
             .block()
             .ok_or(FlashbotsMiddlewareError::MissingParameters)?;
 
-        let futures = self.relays.iter().map(|relay| {
-            async move {
+        let futures = self
+            .relays
+            .iter()
+            .map(|relay| async move {
                 let response = relay.request("eth_sendBundle", [bundle]).await;
-                response.map(|r: SendBundleResponse| {
-                    PendingBundle::new(
-                        r.bundle_hash,
-                        bundle.block().unwrap(),
-                        bundle.transaction_hashes(),
-                        self.provider(),
-                    )
-                }).map_err(FlashbotsMiddlewareError::RelayError)
-            }
-        }).collect::<Vec<_>>();
-    
+                response
+                    .map(|r: SendBundleResponse| {
+                        PendingBundle::new(
+                            r.bundle_hash,
+                            bundle.block().unwrap(),
+                            bundle.transaction_hashes(),
+                            self.provider(),
+                        )
+                    })
+                    .map_err(FlashbotsMiddlewareError::RelayError)
+            })
+            .collect::<Vec<_>>();
+
         let responses = future::join_all(futures).await;
-    
+
         Ok(responses)
     }
 }

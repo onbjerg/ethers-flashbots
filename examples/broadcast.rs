@@ -5,7 +5,6 @@ use eyre::Result;
 use std::convert::TryFrom;
 use url::Url;
 
-
 // See https://www.mev.to/builders for up to date builder URLs
 static BUILDER_URLS: &[&str] = &[
     "https://builder0x69.io",
@@ -37,7 +36,10 @@ async fn main() -> Result<()> {
     let client = SignerMiddleware::new(
         BroadcasterMiddleware::new(
             provider,
-            BUILDER_URLS.iter().map(|url| Url::parse(url).unwrap()).collect(),
+            BUILDER_URLS
+                .iter()
+                .map(|url| Url::parse(url).unwrap())
+                .collect(),
             Url::parse("https://relay.flashbots.net")?,
             bundle_signer,
         ),
@@ -66,19 +68,17 @@ async fn main() -> Result<()> {
     // You can also optionally wait to see if the bundle was included
     for result in results {
         match result {
-            Ok(pending_bundle) => {
-                match pending_bundle.await {
-                    Ok(bundle_hash) => println!(
-                        "Bundle with hash {:?} was included in target block",
-                        bundle_hash
-                    ),
-                    Err(PendingBundleError::BundleNotIncluded) => {
-                        println!("Bundle was not included in target block.")
-                    }
-                    Err(e) => println!("An error occured: {}", e),
+            Ok(pending_bundle) => match pending_bundle.await {
+                Ok(bundle_hash) => println!(
+                    "Bundle with hash {:?} was included in target block",
+                    bundle_hash
+                ),
+                Err(PendingBundleError::BundleNotIncluded) => {
+                    println!("Bundle was not included in target block.")
                 }
+                Err(e) => println!("An error occured: {}", e),
             },
-            Err(e) => println!("An error occured: {}", e)
+            Err(e) => println!("An error occured: {}", e),
         }
     }
 
