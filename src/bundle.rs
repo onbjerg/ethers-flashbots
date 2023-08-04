@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize, Serializer};
 pub type BundleHash = H256;
 
 /// A transaction that can be added to a bundle.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 pub enum BundleTransaction {
     /// A pre-signed transaction.
     Signed(Box<Transaction>),
@@ -45,7 +45,7 @@ impl From<Bytes> for BundleTransaction {
 ///
 /// - At least one transaction ([`BundleRequest::push_transaction`])
 /// - A target block ([`BundleRequest::set_block`])
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BundleRequest {
     #[serde(rename = "txs")]
