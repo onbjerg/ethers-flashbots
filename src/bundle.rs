@@ -261,7 +261,7 @@ impl BundleRequest {
 ///
 /// Details for a transaction that has been simulated as part of
 /// a bundle.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct SimulatedTransaction {
     /// The transaction hash
     #[serde(rename = "txHash")]
@@ -317,7 +317,7 @@ impl SimulatedTransaction {
 /// Details of a simulated bundle.
 ///
 /// The details of a bundle that has been simulated.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct SimulatedBundle {
     /// The bundle's hash.
     #[serde(rename = "bundleHash")]
