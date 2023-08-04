@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize, Serializer};
 pub type BundleHash = H256;
 
 /// A transaction that can be added to a bundle.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum BundleTransaction {
     /// A pre-signed transaction.
     Signed(Box<Transaction>),
