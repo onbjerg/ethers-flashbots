@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize, Serializer};
 pub type BundleHash = H256;
 
 /// A transaction that can be added to a bundle.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum BundleTransaction {
     /// A pre-signed transaction.
     Signed(Box<Transaction>),
@@ -45,11 +45,11 @@ impl From<Bytes> for BundleTransaction {
 ///
 /// - At least one transaction ([`BundleRequest::push_transaction`])
 /// - A target block ([`BundleRequest::set_block`])
-#[derive(Clone, Debug, Default, Serialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BundleRequest {
     #[serde(rename = "txs")]
-    #[serde(serialize_with = "serialize_txs")]
+    // #[serde(serialize_with = "serialize_txs")]
     transactions: Vec<BundleTransaction>,
     #[serde(rename = "revertingTxHashes")]
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -78,20 +78,20 @@ pub struct BundleRequest {
     simulation_basefee: Option<u64>,
 }
 
-pub fn serialize_txs<S>(txs: &[BundleTransaction], s: S) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    let raw_txs: Vec<Bytes> = txs
-        .iter()
-        .map(|tx| match tx {
-            BundleTransaction::Signed(inner) => inner.rlp(),
-            BundleTransaction::Raw(inner) => inner.clone(),
-        })
-        .collect();
+// pub fn serialize_txs<S>(txs: &[BundleTransaction], s: S) -> Result<S::Ok, S::Error>
+// where
+//     S: Serializer,
+// {
+//     let raw_txs: Vec<Bytes> = txs
+//         .iter()
+//         .map(|tx| match tx {
+//             BundleTransaction::Signed(inner) => inner.rlp(),
+//             BundleTransaction::Raw(inner) => inner.clone(),
+//         })
+//         .collect();
 
-    raw_txs.serialize(s)
-}
+//     raw_txs.serialize(s)
+// }
 
 impl BundleRequest {
     /// Creates an empty bundle request.
