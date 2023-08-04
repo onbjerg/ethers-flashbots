@@ -139,7 +139,7 @@ impl<S: Signer + Clone> Clone for Relay<S> {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub(crate) struct SendBundleResponse {
+pub struct SendBundleResponse {
     pub(crate) bundle_hash: BundleHash,
 }
 
