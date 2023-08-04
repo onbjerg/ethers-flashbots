@@ -1,5 +1,5 @@
 [package]
-name = "ethers-flashbots"
+name = "ethers-flashbots-test"
 version = "0.13.1"
 authors = ["Oliver Nordbjerg <hi@notbjerg.me>"]
 license = "MIT"

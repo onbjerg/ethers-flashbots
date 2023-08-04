@@ -77,7 +77,6 @@ pub struct Response<T> {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(untagged)]
 pub enum ResponseData<R> {
     Error { error: JsonRpcError },
     Success { result: R },
