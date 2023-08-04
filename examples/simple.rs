@@ -29,6 +29,7 @@ async fn main() -> Result<()> {
     let tx = TransactionRequest::pay("vitalik.eth", 100);
     let pending_tx = client.send_transaction(tx, None).await?;
 
+
     // Get the receipt
     let receipt = pending_tx
         .await?
