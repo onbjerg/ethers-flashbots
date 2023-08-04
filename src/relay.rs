@@ -100,9 +100,7 @@ impl<S: Signer> Relay<S> {
         }
 
         let res = req.json(&payload).send().await?;
-        print!("response: {:?}", res);
         let status = res.error_for_status_ref();
-        print!("response: {:?}", status);
 
 
         match status {
@@ -119,7 +117,6 @@ impl<S: Signer> Relay<S> {
             }
             Ok(_) => {
                 let text = res.text().await?;
-                print!("test: {:?}", text);
                 let res: Response<R> = serde_json::from_str(&text)
                     .map_err(|err| RelayError::ResponseSerdeJson { err, text })?;
 
