@@ -102,6 +102,7 @@ impl<S: Signer> Relay<S> {
         let res = req.json(&payload).send().await?;
         let status = res.error_for_status_ref();
 
+
         match status {
             Err(err) => {
                 let text = res.text().await?;
@@ -136,9 +137,9 @@ impl<S: Signer + Clone> Clone for Relay<S> {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
-pub(crate) struct SendBundleResponse {
+pub struct SendBundleResponse {
     pub(crate) bundle_hash: BundleHash,
 }
 

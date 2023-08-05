@@ -1,6 +1,6 @@
 use ethers::core::rand::thread_rng;
 use ethers::prelude::*;
-use ethers_flashbots::*;
+use ethers_flashbots_test::*;
 use eyre::Result;
 use std::convert::TryFrom;
 use url::Url;
@@ -28,6 +28,7 @@ async fn main() -> Result<()> {
     // Pay Vitalik using a Flashbots bundle!
     let tx = TransactionRequest::pay("vitalik.eth", 100);
     let pending_tx = client.send_transaction(tx, None).await?;
+
 
     // Get the receipt
     let receipt = pending_tx

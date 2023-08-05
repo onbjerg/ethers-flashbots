@@ -145,8 +145,8 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
     ///
     /// This can either be a full Flashbots relay or a node that implements
     /// the `eth_callBundle` remote procedure call.
-    pub fn set_simulation_relay(&mut self, relay_url: impl Into<Url>) {
-        self.simulation_relay = Some(Relay::new(relay_url, None));
+    pub fn set_simulation_relay(&mut self, relay_url: impl Into<Url>, relay_signer: S) {
+        self.simulation_relay = Some(Relay::new(relay_url, Some(relay_signer)));
     }
 
     /// Simulate a bundle.

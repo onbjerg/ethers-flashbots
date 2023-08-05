@@ -20,8 +20,8 @@ pub use user::UserStats;
 mod middleware;
 pub use middleware::{FlashbotsMiddleware, FlashbotsMiddlewareError};
 
-mod jsonrpc;
-mod relay;
+pub mod jsonrpc;
+pub mod relay;
 pub use relay::{Relay, RelayError};
 
 mod utils;

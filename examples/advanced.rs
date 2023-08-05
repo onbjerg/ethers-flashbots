@@ -1,9 +1,10 @@
 use ethers::core::{rand::thread_rng, types::transaction::eip2718::TypedTransaction};
 use ethers::prelude::*;
-use ethers_flashbots::*;
+use ethers_flashbots_test::*;
 use eyre::Result;
 use std::convert::TryFrom;
 use url::Url;
+use std::sync::{Arc};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -16,14 +17,21 @@ async fn main() -> Result<()> {
     let wallet = LocalWallet::new(&mut thread_rng());
 
     // Add signer and Flashbots middleware
-    let client = SignerMiddleware::new(
-        FlashbotsMiddleware::new(
-            provider,
-            Url::parse("https://relay.flashbots.net")?,
-            bundle_signer,
-        ),
-        wallet,
+    let mut flashbot_middleware = FlashbotsMiddleware::new(
+        provider,
+        Url::parse("https://relay.flashbots.net")?,
+        bundle_signer.clone(),
     );
+
+    flashbot_middleware.set_simulation_relay(
+        Url::parse("https://relay.flashbots.net")?,
+        bundle_signer.clone(),
+    );
+
+    let client = Arc::new(SignerMiddleware::new(
+        flashbot_middleware,
+        wallet.clone(),
+    ));
 
     // get last block number
     let block_number = client.get_block_number().await?;
