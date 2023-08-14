@@ -18,7 +18,7 @@ mod user;
 pub use user::UserStats;
 
 mod middleware;
-pub use middleware::{FlashbotsMiddleware, FlashbotsMiddlewareError};
+pub use middleware::{BroadcasterMiddleware, FlashbotsMiddleware, FlashbotsMiddlewareError};
 
 mod jsonrpc;
 mod relay;
