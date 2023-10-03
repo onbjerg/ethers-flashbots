@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+- Fix simulation for broadcaster middleware (#58)
+
 ## [0.14.0]
 
 ### Added
@@ -187,6 +189,7 @@ A small patch to fix the documentation on [docs.rs](https://docs.rs).
 Initial release.
 
 <!-- next-url !-->
+
 [Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.14.0...HEAD
 [0.14.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.13.1...0.14.0
 [0.13.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.13.0...0.13.1
