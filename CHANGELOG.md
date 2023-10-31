@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 - Fix simulation for broadcaster middleware (#58)
+- Added support for `replacementUuid` field in `eth_sendBundle`
 
 ## [0.14.0]
 

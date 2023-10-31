@@ -65,6 +65,10 @@ pub struct BundleRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     max_timestamp: Option<u64>,
 
+    #[serde(rename = "replacementUuid")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    uuid: Option<String>,
+
     #[serde(rename = "stateBlockNumber")]
     #[serde(skip_serializing_if = "Option::is_none")]
     simulation_block: Option<U64>,
@@ -168,6 +172,18 @@ impl BundleRequest {
                 BundleTransaction::Raw(inner) => keccak256(inner).into(),
             })
             .collect()
+    }
+
+    /// Get a reference to the replacement uuid (if any).
+    pub fn uuid(&self) -> &Option<String> {
+        &self.uuid
+    }
+
+    /// Set the replacement uuid of the bundle.
+    /// This is used for bundle replacements or cancellations using eth_cancelBundle
+    pub fn set_uuid(mut self, uuid: String) -> Self {
+        self.uuid = Some(uuid.clone());
+        self
     }
 
     /// Get the target block (if any).
@@ -431,14 +447,15 @@ mod tests {
             .set_max_timestamp(2000)
             .set_simulation_timestamp(1000)
             .set_simulation_block(1.into())
-            .set_simulation_basefee(333333);
+            .set_simulation_basefee(333333)
+            .set_uuid("UuidString".to_string());
 
         bundle.add_transaction(Bytes::from(vec![0x3]));
         bundle.add_revertible_transaction(Bytes::from(vec![0x4]));
 
         assert_eq!(
             &serde_json::to_string(&bundle).unwrap(),
-            r#"{"txs":["0x01","0x02","0x03","0x04"],"revertingTxHashes":["0xf2ee15ea639b73fa3db9b34a245bdfa015c260c598b211bf05a1ecc4b3e3b4f2","0xf343681465b9efe82c933c3e8748c70cb8aa06539c361de20f72eac04e766393"],"blockNumber":"0x2","minTimestamp":1000,"maxTimestamp":2000,"stateBlockNumber":"0x1","timestamp":1000,"baseFee":333333}"#
+            r#"{"txs":["0x01","0x02","0x03","0x04"],"revertingTxHashes":["0xf2ee15ea639b73fa3db9b34a245bdfa015c260c598b211bf05a1ecc4b3e3b4f2","0xf343681465b9efe82c933c3e8748c70cb8aa06539c361de20f72eac04e766393"],"blockNumber":"0x2","minTimestamp":1000,"maxTimestamp":2000,"replacementUuid":"UuidString","stateBlockNumber":"0x1","timestamp":1000,"baseFee":333333}"#
         );
     }
 
