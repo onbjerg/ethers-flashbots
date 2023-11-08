@@ -20,6 +20,7 @@ static BUILDER_URLS: &[&str] = &[
     "https://rpc.payload.de",
     "https://rpc.lightspeedbuilder.info",
     "https://rpc.nfactorial.xyz",
+    "https://rpc.lokibuilder.xyz",
 ];
 
 #[tokio::main]
