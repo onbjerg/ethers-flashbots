@@ -33,6 +33,7 @@ pin-project = "1"
 
 # Ethers
 ethers = { version = "2.0.0", default-features = false }
+ethers = { git = "https://github.com/gakonst/ethers-rs.git" , rev = "8fb3c1f" ,  default-features = false }
 
 [dev-dependencies]
 tokio = { version = "1.21.2", features = ["macros", "rt-multi-thread"] }
