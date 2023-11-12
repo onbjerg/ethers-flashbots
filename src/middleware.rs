@@ -374,7 +374,7 @@ impl<M: Middleware, S: Signer> BroadcasterMiddleware<M, S> {
                 .into_iter()
                 .map(|r| Relay::new(r, Some(relay_signer.clone())))
                 .collect(),
-            simulation_relay: Relay::new(simulation_relay, None),
+            simulation_relay: Relay::new(simulation_relay, Some(relay_signer)),
         }
     }
 
