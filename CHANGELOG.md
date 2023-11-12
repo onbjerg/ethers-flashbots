@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.14.0]
+
+### Added
+
+- Added a broadcaster middleware (#54)
+
+## [0.13.1]
+
+### Fixed
+
+- Check the entire block to determine bundle inclusion. See #47 for more detail.
+
 ## [0.13.0]
 
 ### Added
@@ -175,8 +187,10 @@ A small patch to fix the documentation on [docs.rs](https://docs.rs).
 Initial release.
 
 <!-- next-url !-->
-[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.13.0...HEAD
-[0.12.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.12.1...0.13.0
+[Unreleased]: https://github.com/onbjerg/ethers-flashbots/compare/0.14.0...HEAD
+[0.14.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.13.1...0.14.0
+[0.13.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.13.0...0.13.1
+[0.13.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.12.1...0.13.0
 [0.12.1]: https://github.com/onbjerg/ethers-flashbots/compare/0.12.0...0.12.1
 [0.12.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/onbjerg/ethers-flashbots/compare/0.10.0...0.11.0
