@@ -20,6 +20,7 @@ thiserror = { version = "1.0.37", default-features = false }
 serde = "1"
 serde_json = "1"
 chrono = { version = "0.4.22", features = ["default", "serde"] }
+uuid = "1.5"
 
 # HTTP
 url = { version = "2.3.1", default-features = false }
