@@ -80,12 +80,12 @@ pub struct Response<T> {
 #[serde(untagged)]
 pub enum ResponseData<R> {
     Error { error: JsonRpcError },
-    Success { result: R },
+    Success { result: Option<R> },
 }
 
 impl<R> ResponseData<R> {
     /// Consume response and return value
-    pub fn into_result(self) -> Result<R, JsonRpcError> {
+    pub fn into_result(self) -> Result<Option<R>, JsonRpcError> {
         match self {
             ResponseData::Success { result } => Ok(result),
             ResponseData::Error { error } => Err(error),
@@ -102,7 +102,15 @@ mod tests {
         let response: Response<u64> =
             serde_json::from_str(r#"{"jsonrpc": "2.0", "result": 19, "id": 1}"#).unwrap();
         assert_eq!(response.id, 1);
-        assert_eq!(response.data.into_result().unwrap(), 19);
+        assert_eq!(response.data.into_result().unwrap(), Some(19));
+    }
+
+    #[test]
+    fn deser_response_without_result() {
+        let response: Response<u64> =
+            serde_json::from_str(r#"{"jsonrpc": "2.0", "id": 1, "result": null}"#).unwrap();
+        assert_eq!(response.id, 1);
+        assert_eq!(response.data.into_result().unwrap(), None);
     }
 
     #[test]

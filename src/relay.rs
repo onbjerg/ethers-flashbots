@@ -72,7 +72,7 @@ impl<S: Signer> Relay<S> {
         &self,
         method: &str,
         params: T,
-    ) -> Result<R, RelayError<S>> {
+    ) -> Result<Option<R>, RelayError<S>> {
         let next_id = self.id.load(Ordering::SeqCst) + 1;
         self.id.store(next_id, Ordering::SeqCst);
 
@@ -139,7 +139,7 @@ impl<S: Signer + Clone> Clone for Relay<S> {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct SendBundleResponse {
-    pub(crate) bundle_hash: BundleHash,
+    pub(crate) bundle_hash: Option<BundleHash>,
 }
 
 #[derive(Serialize)]

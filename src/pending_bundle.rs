@@ -28,7 +28,7 @@ use thiserror::Error;
 /// [fb_debug]: https://docs.flashbots.net/flashbots-auction/searchers/faq/#why-didnt-my-transaction-get-included
 #[pin_project]
 pub struct PendingBundle<'a, P> {
-    pub bundle_hash: BundleHash,
+    pub bundle_hash: Option<BundleHash>,
     pub block: U64,
     pub transactions: Vec<TxHash>,
     provider: &'a Provider<P>,
@@ -38,7 +38,7 @@ pub struct PendingBundle<'a, P> {
 
 impl<'a, P: JsonRpcClient> PendingBundle<'a, P> {
     pub fn new(
-        bundle_hash: BundleHash,
+        bundle_hash: Option<BundleHash>,
         block: U64,
         transactions: Vec<TxHash>,
         provider: &'a Provider<P>,
@@ -55,13 +55,13 @@ impl<'a, P: JsonRpcClient> PendingBundle<'a, P> {
 
     /// Get the bundle hash for this pending bundle.
     #[deprecated(note = "use the bundle_hash field instead")]
-    pub fn bundle_hash(&self) -> BundleHash {
+    pub fn bundle_hash(&self) -> Option<BundleHash> {
         self.bundle_hash
     }
 }
 
 impl<'a, P: JsonRpcClient> Future for PendingBundle<'a, P> {
-    type Output = Result<BundleHash, PendingBundleError>;
+    type Output = Result<Option<BundleHash>, PendingBundleError>;
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context) -> Poll<Self::Output> {
         let this = self.project();
