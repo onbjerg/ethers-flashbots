@@ -5,6 +5,7 @@ use ethers::core::{
     utils::keccak256,
 };
 use serde::{Deserialize, Serialize, Serializer};
+use uuid::Uuid;
 
 /// A bundle hash.
 pub type BundleHash = H256;
@@ -29,7 +30,6 @@ impl From<Bytes> for BundleTransaction {
         Self::Raw(tx)
     }
 }
-
 /// A bundle that can be submitted to a Flashbots relay.
 ///
 /// The bundle can include your own transactions and transactions from
@@ -65,6 +65,11 @@ pub struct BundleRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     max_timestamp: Option<u64>,
 
+    #[serde(rename = "replacementUuid")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "serialize_uuid_as_string")]
+    uuid: Option<Uuid>,
+
     #[serde(rename = "stateBlockNumber")]
     #[serde(skip_serializing_if = "Option::is_none")]
     simulation_block: Option<U64>,
@@ -76,6 +81,15 @@ pub struct BundleRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "baseFee")]
     simulation_basefee: Option<u64>,
+}
+
+fn serialize_uuid_as_string<S>(x: &Option<Uuid>, s: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    // Don't need to handle None option here as handled by
+    // #[serde(skip_serializing_if = "Option::is_none")]
+    s.serialize_str(&x.unwrap().to_string())
 }
 
 pub fn serialize_txs<S>(txs: &[BundleTransaction], s: S) -> Result<S::Ok, S::Error>
@@ -168,6 +182,18 @@ impl BundleRequest {
                 BundleTransaction::Raw(inner) => keccak256(inner).into(),
             })
             .collect()
+    }
+
+    /// Get a reference to the replacement uuid (if any).
+    pub fn uuid(&self) -> &Option<Uuid> {
+        &self.uuid
+    }
+
+    /// Set the replacement uuid of the bundle.
+    /// This is used for bundle replacements or cancellations using eth_cancelBundle
+    pub fn set_uuid(mut self, uuid: Uuid) -> Self {
+        self.uuid = Some(uuid);
+        self
     }
 
     /// Get the target block (if any).
@@ -402,6 +428,7 @@ pub struct BuilderEntry {
 mod tests {
     use super::*;
     use std::str::FromStr;
+    use uuid::uuid;
 
     #[test]
     fn bundle_serialize() {
@@ -431,14 +458,15 @@ mod tests {
             .set_max_timestamp(2000)
             .set_simulation_timestamp(1000)
             .set_simulation_block(1.into())
-            .set_simulation_basefee(333333);
+            .set_simulation_basefee(333333)
+            .set_uuid(uuid!("67e55044-10b1-426f-9247-bb680e5fe0c8"));
 
         bundle.add_transaction(Bytes::from(vec![0x3]));
         bundle.add_revertible_transaction(Bytes::from(vec![0x4]));
 
         assert_eq!(
             &serde_json::to_string(&bundle).unwrap(),
-            r#"{"txs":["0x01","0x02","0x03","0x04"],"revertingTxHashes":["0xf2ee15ea639b73fa3db9b34a245bdfa015c260c598b211bf05a1ecc4b3e3b4f2","0xf343681465b9efe82c933c3e8748c70cb8aa06539c361de20f72eac04e766393"],"blockNumber":"0x2","minTimestamp":1000,"maxTimestamp":2000,"stateBlockNumber":"0x1","timestamp":1000,"baseFee":333333}"#
+            r#"{"txs":["0x01","0x02","0x03","0x04"],"revertingTxHashes":["0xf2ee15ea639b73fa3db9b34a245bdfa015c260c598b211bf05a1ecc4b3e3b4f2","0xf343681465b9efe82c933c3e8748c70cb8aa06539c361de20f72eac04e766393"],"blockNumber":"0x2","minTimestamp":1000,"maxTimestamp":2000,"replacementUuid":"67e55044-10b1-426f-9247-bb680e5fe0c8","stateBlockNumber":"0x1","timestamp":1000,"baseFee":333333}"#
         );
     }
 
