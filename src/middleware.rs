@@ -40,6 +40,15 @@ pub enum FlashbotsMiddlewareError<M: Middleware, S: Signer> {
     /// An error occured in one of the middlewares.
     #[error("{0}")]
     MiddlewareError(M::Error),
+    /// Empty data for bundle simulation request.
+    #[error("Bundle simulation is not available")]
+    BundleSimError,
+    /// Empty data for bundle stats request.
+    #[error("Bundle stats are not available")]
+    BundleStatsError,
+    /// Empty data for user stats request.
+    #[error("User stats are not available")]
+    UserStatsError,
 }
 
 impl<M: Middleware, S: Signer> MiddlewareError for FlashbotsMiddlewareError<M, S> {
@@ -170,7 +179,8 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
             .unwrap_or(&self.relay)
             .request("eth_callBundle", [bundle])
             .await
-            .map_err(FlashbotsMiddlewareError::RelayError)
+            .map_err(FlashbotsMiddlewareError::RelayError)?
+            .ok_or(FlashbotsMiddlewareError::BundleSimError)
     }
 
     /// Send a bundle to the relayer.
@@ -193,18 +203,26 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
             return Err(FlashbotsMiddlewareError::MissingParameters);
         }
 
-        let response: SendBundleResponse = self
+        let response: Option<SendBundleResponse> = self
             .relay
             .request("eth_sendBundle", [bundle])
             .await
             .map_err(FlashbotsMiddlewareError::RelayError)?;
 
-        Ok(PendingBundle::new(
-            response.bundle_hash,
-            bundle.block().unwrap(),
-            bundle.transaction_hashes(),
-            self.provider(),
-        ))
+        match response {
+            Some(r) => Ok(PendingBundle::new(
+                r.bundle_hash,
+                bundle.block().unwrap(),
+                bundle.transaction_hashes(),
+                self.provider(),
+            )),
+            None => Ok(PendingBundle::new(
+                None,
+                bundle.block().unwrap(),
+                bundle.transaction_hashes(),
+                self.provider(),
+            )),
+        }
     }
 
     /// Get stats for a particular bundle.
@@ -222,7 +240,8 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
                 }],
             )
             .await
-            .map_err(FlashbotsMiddlewareError::RelayError)
+            .map_err(FlashbotsMiddlewareError::RelayError)?
+            .ok_or(FlashbotsMiddlewareError::BundleStatsError)
     }
 
     /// Get stats for your searcher identity.
@@ -244,7 +263,8 @@ impl<M: Middleware, S: Signer> FlashbotsMiddleware<M, S> {
                 }],
             )
             .await
-            .map_err(FlashbotsMiddlewareError::RelayError)
+            .map_err(FlashbotsMiddlewareError::RelayError)?
+            .ok_or(FlashbotsMiddlewareError::UserStatsError)
     }
 }
 
@@ -407,7 +427,8 @@ impl<M: Middleware, S: Signer> BroadcasterMiddleware<M, S> {
         self.simulation_relay
             .request("eth_callBundle", [bundle])
             .await
-            .map_err(FlashbotsMiddlewareError::RelayError)
+            .map_err(FlashbotsMiddlewareError::RelayError)?
+            .ok_or(FlashbotsMiddlewareError::BundleSimError)
     }
 
     /// Broadcast a bundle to the builders.
@@ -438,13 +459,19 @@ impl<M: Middleware, S: Signer> BroadcasterMiddleware<M, S> {
             .map(|relay| async move {
                 let response = relay.request("eth_sendBundle", [bundle]).await;
                 response
-                    .map(|r: SendBundleResponse| {
-                        PendingBundle::new(
+                    .map(|response: Option<SendBundleResponse>| match response {
+                        Some(r) => PendingBundle::new(
                             r.bundle_hash,
                             bundle.block().unwrap(),
                             bundle.transaction_hashes(),
                             self.provider(),
-                        )
+                        ),
+                        None => PendingBundle::new(
+                            None,
+                            bundle.block().unwrap(),
+                            bundle.transaction_hashes(),
+                            self.provider(),
+                        ),
                     })
                     .map_err(FlashbotsMiddlewareError::RelayError)
             })
