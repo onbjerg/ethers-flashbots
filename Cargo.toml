@@ -24,7 +24,7 @@ uuid = "1.5"
 
 # HTTP
 url = { version = "2.3.1", default-features = false }
-reqwest = { version = "0.11", default-features = false }
+reqwest = { version = "0.12", features = ["json"], default-features = false }
 
 # Async
 async-trait = { version = "0.1.58", default-features = false }
