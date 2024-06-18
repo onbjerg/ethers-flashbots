@@ -1,5 +1,9 @@
 ## Ethers Flashbots
 
+> ### Deprecated
+>
+> This package is deprecated alongside ethers-rs, and will no longer be maintained.
+
 [![CI Status][ci-badge]][ci-url]
 [![Crates.io][crates-badge]][crates-url]
 [![Docs.rs][docs-badge]][docs-url]
